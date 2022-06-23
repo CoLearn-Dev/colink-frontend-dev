@@ -1,0 +1,65 @@
+.modal {
+    position: relative;
+    margin: 0 auto;
+   
+    padding: 10px;
+    height: 800px;
+    max-width: 950px;
+    
+    background-color: #FAFAFA;
+    border-radius: 18px;
+    border: 1px solid #cfcece;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.modal > button {
+    width: 75px;
+    margin: 0 auto;
+}
+
+.modalInner {
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.modalField {
+    /* width: 50%; */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+th {
+    padding: 5px;
+}
+
+.buttonGroup {
+    position: absolute;
+    bottom: 25px;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.buttonGroup > button {
+    margin: 0 2px;
+}
+
+.innerDisplay {
+    width: 85%;
+    height: 80%;
+    padding: 15px;
+    
+    background-color: #DDDDDD;
+    border-radius: 18px;
+    border: 1px solid #cfcece;
+
+    font-size: 12px;
+
+    word-break: break-all;
+}

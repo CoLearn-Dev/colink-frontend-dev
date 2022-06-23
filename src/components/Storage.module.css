@@ -1,0 +1,101 @@
+.modal {
+    position: relative;
+    margin: 0 auto;
+   
+    padding: 10px;
+    max-width: 1000px;
+    height: 375px;
+    
+    background-color: #FAFAFA;
+    border-radius: 18px;
+    border: 1px solid #cfcece;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.modal > button {
+    width: 75px;
+    margin: 0 auto;
+}
+
+.modalInner {
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.modalField {
+    width: 33%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modalField > button {
+    margin-top: 5px;
+}
+
+.buttonGroup {
+    display: flex;
+    flex-direction: row;
+
+    margin-top: -10px;
+}
+
+.buttonGroup > button {
+    margin: 0 2px;
+}
+
+.tableDisplay {
+    margin-top: 5px;
+    height: 50%;
+    width: 90%;
+
+    display: block; /* important */
+    overflow-y: auto;
+
+    font-size: 15px;
+}
+
+.tableDisplay > table {
+    width: 100%;
+    text-align: left;
+}
+
+.tableDisplay > th {
+    width: 100%;
+
+    border: 1px solid black;
+    text-align: left;
+    
+    /* padding-left: 5px; */
+}
+
+.innerDisplay {
+    width: 95%;
+    height: 66%;
+    padding: 15px;
+    
+    background-color: #DDDDDD;
+    border-radius: 18px;
+    border: 1px solid #cfcece;
+
+    word-break: break-all;
+}
+
+.innerInfo {
+    width: 100%;
+}
+
+.innerInfo > button {
+    margin-top: 100px;
+}
+
+textarea {
+    resize: none;
+    height: 50px;
+}

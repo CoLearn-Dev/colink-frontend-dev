@@ -1,0 +1,26 @@
+.App {
+  text-align: center;
+}
+
+.statusPanel {
+  position: relative;
+  margin: 0 auto;
+ 
+  padding: 10px;
+  max-width: 500px;
+  
+  background-color: #FAFAFA;
+  border-radius: 18px;
+  border: 1px solid #cfcece;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.statusInner {
+  display: flex;
+}
+
+.statusField {
+  width: 50%;
+}

@@ -1,0 +1,12 @@
+version: "3"
+services:
+  envoy:
+    image: envoyproxy/envoy-dev:e4955aed5694f9935d674419dbb364e744f697b4
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+      # - ../example-ca-keys/server.pem:/etc/server.pem
+      # - ../example-ca-keys/server-key.pem:/etc/server-key.pem
+      # - ../example-ca-keys/ca.pem:/etc/ca.pem
+    ports:
+      - "9901:9901"
+      - "8000:8000"
