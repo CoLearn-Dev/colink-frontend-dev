@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CoreInfo, Empty, UserConsent, Jwt } from '../../proto/colink_pb';
+import { CoreInfo, Empty, UserConsent, RefreshTokenRequest, Jwt } from '../../proto/colink_pb';
 import secp256k1 from 'secp256k1';
 import crypto from 'crypto';
 import { client } from '../App';
@@ -10,14 +10,14 @@ interface Props {
     jwtSetter: Function,
 }
 
-const generateNewJWT = async (adminToken: string) => {
+const generateNewJWT = async (adminToken: string, expTime: number) => {
     // generate new secp256k1 private key
     let privKeyStr: string = Buffer.from(crypto.randomBytes(32)).toString('hex');
 
-    return generateJWT(privKeyStr, adminToken);
+    return generateJWT(privKeyStr, adminToken, expTime);
 }
 
-const generateJWT = async (privKeyStr: string, adminToken: string) => {
+const generateJWT = async (privKeyStr: string, adminToken: string, expTime: number) => {
     // set metadata with admin token
     let meta = {'authorization': adminToken};
 
@@ -30,7 +30,7 @@ const generateJWT = async (privKeyStr: string, adminToken: string) => {
     let timeBuf: Buffer = Buffer.alloc(8);
     timeBuf.writeBigUInt64LE(BigInt(timestamp));
     
-    let exp: number = timestamp + 86400 * 31; // 31 day expiration date by default
+    let exp: number = timestamp + 86400 * expTime; // 31 day expiration date by default
     let expBuf: Buffer = Buffer.alloc(8);
     expBuf.writeBigUInt64LE(BigInt(exp));
     
@@ -87,9 +87,33 @@ const getLink = (contents: string) => {
     return dataLink;
 }
 
+const refreshToken = async (time: number, oldJwt: string) => {
+    let request: RefreshTokenRequest = new RefreshTokenRequest();
+    request.setExpirationTime(time);
+    
+    let meta = {'authorization': oldJwt};
+
+    let newJwt: string = "";
+    await client.refreshToken(request, meta)
+        .then(jwt => {
+            newJwt = jwt.getJwt();
+        })
+        .catch(err => {
+            alert(err);
+        });
+    return newJwt;
+}
+
+const guestToken = async (adminToken: string, time: number) => {
+    let result = await Promise.resolve(generateNewJWT(adminToken, time));
+    return result[1];
+}
+
 export const Login: React.FC<Props> = (props) => {
     const[privateKey, updateKey] = useState("");
     const[localJwt, updateJwt] = useState("");
+    const[time, updateTime] = useState(0);
+    const[guestJwt, updateGuestJwt] = useState("");
     const[displayState, setDisplayState] = useState(true);
 
     const changeDisplay = () => {
@@ -106,11 +130,13 @@ export const Login: React.FC<Props> = (props) => {
                             <h4>Credentials:</h4>
                             <div className={styles.innerDisplay}>
                                 {privateKey == "" ? <span></span> : <span>Private Key: {privateKey}</span>} <br /><br />
-                                {localJwt == "" ? <span></span> : <span>Client JWT: {localJwt}</span>}
+                                {localJwt == "" ? <span></span> : <span>Client JWT: {localJwt}</span>} <br /><br />
+                                {guestJwt == "" ? <span></span> : <span>Guest JWT: {guestJwt}</span>}
                             </div>
                             <div className={styles.buttonGroup}>
                                 {privateKey == "" ? <span></span> :  <button><a download="private_key.txt" href={getLink(privateKey)}>Download PK</a></button>}
-                                {localJwt == "" ? <span></span> :  <button><a download="user_JWT.txt" href={getLink(localJwt)}>Download JWT</a></button>}
+                                {localJwt == "" ? <span></span> :  <button><a download="user_JWT.txt" href={getLink(localJwt)}>Download User JWT</a></button>}
+                                {guestJwt == "" ? <span></span> :  <button><a download="guest_JWT.txt" href={getLink(guestJwt)}>Download Guest JWT</a></button>}
                             </div>
                         </div>
                     );
@@ -118,7 +144,7 @@ export const Login: React.FC<Props> = (props) => {
             }
 
             const getJWT = async () => {
-                await generateJWT(privateKey, props.adminToken)
+                await generateJWT(privateKey, props.adminToken, 31)
                     .then(res => {
                         updateKey(res[0]);
                         updateJwt(res[1]);
@@ -127,11 +153,30 @@ export const Login: React.FC<Props> = (props) => {
             }
 
             const getNewJWT = async () => {
-                await generateNewJWT(props.adminToken)
+                await generateNewJWT(props.adminToken, 31)
                     .then(res => {
                         updateKey(res[0]);
                         updateJwt(res[1]);
                         props.jwtSetter(res[1]);
+                    });
+            }
+
+            const refreshJWT = async (time: number) => {
+                // get timestamps
+                let timestamp: number = parseInt((Date.now() / 1000).toFixed()); // Date.now() returns milliseconds, must convert to seconds
+                let exp: number = timestamp + time * 86400; // get expiration timestamp
+
+                await refreshToken(exp, localJwt)
+                    .then(res => {
+                        updateJwt(res);
+                        props.jwtSetter(res);
+                    });
+            }
+
+            const genGuestJwt = async (time: number) => {
+                await guestToken(props.adminToken, time)
+                    .then(res => {
+                        updateGuestJwt(res);
                     });
             }
     
@@ -152,6 +197,16 @@ export const Login: React.FC<Props> = (props) => {
                             <div>
                                 <h4>Use Pre-existing JWT</h4>
                                 <input type="file" onChange={(e) => {getExistingJWT(e, updateJwt, props.jwtSetter)}} /><br /><br />
+                            </div>
+                            <div>
+                                <h4>Refresh JWT (# Days)</h4>
+                                <input type="text" onChange={(e) => {updateTime(parseInt(e.target.value));}}></input><br /><br />
+                                <button onClick={() => refreshJWT(time)}>Refresh JWT</button>
+                            </div>
+                            <div>
+                                <h4>Generate Guest JWT (# Days)</h4>
+                                <input type="text" onChange={(e) => {updateTime(parseInt(e.target.value));}}></input><br /><br />
+                                <button onClick={() => genGuestJwt(time)}>Generate Guest JWT</button>
                             </div>
                         </div>
                         {displayInfo()}

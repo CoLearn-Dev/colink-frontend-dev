@@ -41,9 +41,9 @@ export const AdminToken: React.FC<Props> = (props) => {
 
     return (
         <div className="wrapper">
-            <h3>Import Admin Token:</h3>
+            <h3>Import Host Token:</h3>
             <input type="file" onChange={(e) => getAdminToken(e, props.tokenSetter)} /><br /><br />
-            <button onClick={() => setAdminToken(props.tokenSetter, toggleSet)}>Set Admin Token</button><br /><br />
+            <button onClick={() => setAdminToken(props.tokenSetter, toggleSet)}>Set Host Token</button><br /><br />
             {/* {setStatus()} */}
         </div>
     )    

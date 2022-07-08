@@ -15,9 +15,9 @@ function App() {
 
   const tokenSet = () => {
     if (adminToken != "") {
-      return <span>Admin Token: Set</span>
+      return <span>Host Token: Set</span>
     } else {
-      return <span>Admin Token: Not set</span>
+      return <span>Host Token: Not set</span>
     }
   }
 
