@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp } from 'colink-sdk-test';
+import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp } from '../../lib';
 import { readFromFile, createDownloadHref } from '../../utils';
 import { client } from '../../App';
 import styles from './UserPanel.module.css'
