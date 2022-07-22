@@ -9,7 +9,7 @@ The CoLink client receives input from the user and makes HTTP/1.1 calls (i.e. PO
 
 The `colink-frontend-dev` repository handles the React CoLink Client and the Envoy Proxy configurations.
 
-## Setup
+## Setup (Manual)
 ### Node.js and npm
 Node.js and npm can be installed [here](https://nodejs.org/en/download/). After installation, run `npm install` in the root directory to download all required node packages (protoc, TypeScript, etc).
 
@@ -43,7 +43,7 @@ Instructions to update `/proto` definitions:
     * Make script executable: `chmod +x ./colink-frontend-dev/proto-gen.sh`
     * Execute script: `./colink-frontend-dev/proto-gen.sh`
 
-### Running the Application
+### Running the Application (No Setup Script)
 This is a 3 step process:
 * Start the DDS server core (in `/colink-server-dev`): `cargo run -- --address "127.0.0.1" --port 8080 --mq-amqp amqp://guest:guest@localhost:5672 --mq-api http://guest:guest@localhost:15672/api`
     * Runs on 127.0.0.1:8080 (hard-coded address for now)
@@ -53,7 +53,15 @@ This is a 3 step process:
 * Start react client (in `/colink-frontend-dev`): `npm start`
     * Runs on 127.0.0.1:3000 (hard-coded address for now)
 
-The frontend UI is hosted at http://localhost:3000
+### Running the Application (Setup Script)
+This is a 2 step process:
+* Start the DDS server core (in `/colink-server-dev`): `cargo run -- --address "127.0.0.1" --port 8080 --mq-amqp amqp://guest:guest@localhost:5672 --mq-api http://guest:guest@localhost:15672/api`
+    * Runs on 127.0.0.1:8080 (hard-coded address for now)
+    * No TLS support (will include later inside envoy proxy)
+* Execute `./start_frontend.sh`
+    * This will install any necessary packages and start the frontend UI
+
+For both setups, the frontend UI is hosted at http://localhost:3000
 
 ### In Application
 * Set the host_token manually in the debug panel before executing any commands (used for user login)
