@@ -82,21 +82,25 @@ export namespace StorageEntries {
   }
 }
 
-export class RefreshTokenRequest extends jspb.Message {
+export class GenerateTokenRequest extends jspb.Message {
   getExpirationTime(): number;
-  setExpirationTime(value: number): RefreshTokenRequest;
+  setExpirationTime(value: number): GenerateTokenRequest;
+
+  getPrivilege(): string;
+  setPrivilege(value: string): GenerateTokenRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): RefreshTokenRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: RefreshTokenRequest): RefreshTokenRequest.AsObject;
-  static serializeBinaryToWriter(message: RefreshTokenRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): RefreshTokenRequest;
-  static deserializeBinaryFromReader(message: RefreshTokenRequest, reader: jspb.BinaryReader): RefreshTokenRequest;
+  toObject(includeInstance?: boolean): GenerateTokenRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GenerateTokenRequest): GenerateTokenRequest.AsObject;
+  static serializeBinaryToWriter(message: GenerateTokenRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GenerateTokenRequest;
+  static deserializeBinaryFromReader(message: GenerateTokenRequest, reader: jspb.BinaryReader): GenerateTokenRequest;
 }
 
-export namespace RefreshTokenRequest {
+export namespace GenerateTokenRequest {
   export type AsObject = {
     expirationTime: number,
+    privilege: string,
   }
 }
 
@@ -160,8 +164,8 @@ export class Participant extends jspb.Message {
   getUserId(): string;
   setUserId(value: string): Participant;
 
-  getPtype(): string;
-  setPtype(value: string): Participant;
+  getRole(): string;
+  setRole(value: string): Participant;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Participant.AsObject;
@@ -174,7 +178,7 @@ export class Participant extends jspb.Message {
 export namespace Participant {
   export type AsObject = {
     userId: string,
-    ptype: string,
+    role: string,
   }
 }
 

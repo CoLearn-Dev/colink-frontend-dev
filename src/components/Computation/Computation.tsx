@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import { Decision, Participant, Task } from '../../proto/colink_pb';
-import { client } from '../App';
-import secp256k1 from 'secp256k1';
-import crypto from 'crypto';
+import { Decision, Participant, Task } from '../../../proto/colink_pb';
 import styles from './Computation.module.css'
 
 interface Props {
-    adminToken: string,
+    hostToken: string,
     jwt: string
 }
 
@@ -24,10 +21,10 @@ let initTasks = (jwt: string) => {
             .setParticipantsList(
                 [new Participant()
                     .setUserId("A9eNam3OI87WvtxlZnTvBsUO2OoHzqIgZoKxrGhT2Oh2")
-                    .setPtype("data instance provider"),
+                    .setRole("data instance provider"),
                 new Participant()
                     .setUserId(userId)
-                    .setPtype("model provider")])
+                    .setRole("model provider")])
             .setParentTask("")
             .setExpirationTime(exp_date - 45670)
             .setDecisionsList([
@@ -48,13 +45,13 @@ let initTasks = (jwt: string) => {
             .setParticipantsList(
                 [new Participant()
                     .setUserId("A9eNam3OI87WvtxlZnTvBsUO2OoHzqIgZoKxrGhT2Oh2")
-                    .setPtype("aggregator"),
+                    .setRole("aggregator"),
                 new Participant()
                     .setUserId(userId)
-                    .setPtype("client"),
+                    .setRole("client"),
                 new Participant()
                     .setUserId("Ahj0fs7tEDlL/bLv/6QU29Dj5E7PjGYOfOBMj+dgP/Zg")
-                    .setPtype("client")
+                    .setRole("client")
                 ])  
             .setParentTask("")
             .setExpirationTime(exp_date - 12424)

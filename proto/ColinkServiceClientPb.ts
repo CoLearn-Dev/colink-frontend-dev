@@ -35,47 +35,47 @@ export class CoLinkClient {
     this.options_ = options;
   }
 
-  methodDescriptorRefreshToken = new grpcWeb.MethodDescriptor(
-    '/colink.CoLink/RefreshToken',
+  methodDescriptorGenerateToken = new grpcWeb.MethodDescriptor(
+    '/colink.CoLink/GenerateToken',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.RefreshTokenRequest,
+    colink$server$dev_proto_colink_pb.GenerateTokenRequest,
     colink$server$dev_proto_colink_pb.Jwt,
-    (request: colink$server$dev_proto_colink_pb.RefreshTokenRequest) => {
+    (request: colink$server$dev_proto_colink_pb.GenerateTokenRequest) => {
       return request.serializeBinary();
     },
     colink$server$dev_proto_colink_pb.Jwt.deserializeBinary
   );
 
-  refreshToken(
-    request: colink$server$dev_proto_colink_pb.RefreshTokenRequest,
+  generateToken(
+    request: colink$server$dev_proto_colink_pb.GenerateTokenRequest,
     metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.Jwt>;
 
-  refreshToken(
-    request: colink$server$dev_proto_colink_pb.RefreshTokenRequest,
+  generateToken(
+    request: colink$server$dev_proto_colink_pb.GenerateTokenRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
                response: colink$server$dev_proto_colink_pb.Jwt) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.Jwt>;
 
-  refreshToken(
-    request: colink$server$dev_proto_colink_pb.RefreshTokenRequest,
+  generateToken(
+    request: colink$server$dev_proto_colink_pb.GenerateTokenRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
                response: colink$server$dev_proto_colink_pb.Jwt) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/colink.CoLink/RefreshToken',
+          '/colink.CoLink/GenerateToken',
         request,
         metadata || {},
-        this.methodDescriptorRefreshToken,
+        this.methodDescriptorGenerateToken,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/colink.CoLink/RefreshToken',
+      '/colink.CoLink/GenerateToken',
     request,
     metadata || {},
-    this.methodDescriptorRefreshToken);
+    this.methodDescriptorGenerateToken);
   }
 
   methodDescriptorImportUser = new grpcWeb.MethodDescriptor(

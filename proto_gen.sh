@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# dependencies
-# yarn proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=proto/ proto/*.proto
+# remove old proto directory
+rm -rf ./colink-frontend-dev/proto
 
 # proto setup for client application
 protoc -I=. ./colink-server-dev/proto/*.proto \
@@ -11,3 +11,6 @@ protoc -I=. ./colink-server-dev/proto/*.proto \
 # fix folder formatting (TODO: implement neater solution)
 mv ./colink-frontend-dev/colink-server-dev/proto ./colink-frontend-dev/proto
 rm -rf ./colink-frontend-dev/colink-server-dev
+
+# have service client point to correct definitions file (TODO: implement neater solution)
+sed -i '' -e 's#../../colink-server-dev/proto/colink_pb#./colink_pb#' ./colink-frontend-dev/proto/ColinkServiceClientPb.ts

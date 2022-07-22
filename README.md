@@ -14,10 +14,7 @@ The `colink-frontend-dev` repository handles the React CoLink Client and the Env
 Node.js and npm can be installed [here](https://nodejs.org/en/download/). After installation, run `npm install` in the root directory to download all required node packages (protoc, TypeScript, etc).
 
 ### Envoy
-Envoy can be installed using brew:
-```
-brew install envoy
-```
+Envoy can be installed from [here](https://www.envoyproxy.io/docs/envoy/latest/start/install).
 
 ## Development
 
