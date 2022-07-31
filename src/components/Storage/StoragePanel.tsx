@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { client } from '../../App';
 import { createEntry, readEntry, updateEntry, deleteEntry, getUserStorageEntries } from '../../lib';
 import { keyNameFromPath, storageEntryToJSON } from '../../lib';
-import { StorageEntry, StorageEntries, ReadKeysRequest } from '../../../proto/colink_pb';
-import { readFromFile, createDownloadHref } from '../../utils';
+import { StorageEntry } from '../../../proto/colink_pb';
+import { createDownloadHref } from '../../utils';
 import styles from './StoragePanel.module.css'
 
 interface Props {
@@ -22,7 +22,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
     const [key, updateKey] = useState("");
     const [payload, updatePayload] = useState("");
     const [upPayload, updateNewPayload] = useState("");
-    const [entries, updateEntries] = useState<StorageEntry[]>([]);
+    const [entries, updateEntries] = useState<string[]>([]);
 
     // Variables to select entry
     const [selectKey, updateSelected] = useState("");
@@ -34,8 +34,11 @@ export const StoragePanel: React.FC<Props> = (props) => {
 
     useEffect(() => {
         async function getData() {
-            let entryList: StorageEntry[] = await getUserStorageEntries(client, props.jwt);
-            updateEntries(entryList);
+            await getUserStorageEntries(client, props.jwt)
+                .then((entries: StorageEntry[]) => {
+                    let keys: string[] = entries.map((entry: StorageEntry) => {return keyNameFromPath(entry.getKeyPath());});
+                    updateEntries(keys);
+                });  
         }
 
         if (props.jwt != "") {
@@ -60,8 +63,8 @@ export const StoragePanel: React.FC<Props> = (props) => {
                     createEntry(client, props.jwt, key, payload)
                         .then((entry: StorageEntry) => {
                             if (entry.toString() !== defEmpty.toString()) {
-                                entries.push(entry);
-                                entries.sort((a, b) => { return keyNameFromPath(a.getKeyPath()) < keyNameFromPath(b.getKeyPath()) ? -1 : 1 })
+                                entries.push(key);
+                                entries.sort();
                                 updateEntries([...entries]);
                             }
                         })
@@ -76,19 +79,18 @@ export const StoragePanel: React.FC<Props> = (props) => {
     function createEntryList(): JSX.Element {
 
         function entryTableMap(): JSX.Element[] {
-            return entries.map((entry: StorageEntry, i: number) => {
-                let fragment = keyNameFromPath(entry.getKeyPath());
-                return (<tr key={fragment}
+            return entries.map((keyName: string, i: number) => {
+                return (<tr key={keyName}
                     onClick={() => {
-                        updateSelected(fragment);
+                        updateSelected(keyName);
                         updateIndex(i);
-                        readEntry(client, props.jwt, entry)
+                        readEntry(client, props.jwt, keyName)
                             .then((entry: StorageEntry) => {
                                 updateDisplay(entry);
                             });
                     }}>
-                    <th style={fragment == selectKey ? { backgroundColor: "#DDDDDD", paddingLeft: numColons(fragment) } :
-                        { paddingLeft: numColons(fragment) }}>{fragment}
+                    <th style={keyName == selectKey ? { backgroundColor: "#DDDDDD", paddingLeft: numColons(keyName) } :
+                        { paddingLeft: numColons(keyName) }}>{keyName}
                     </th>
                 </tr>)
             })
@@ -112,17 +114,16 @@ export const StoragePanel: React.FC<Props> = (props) => {
     function updateEntryButton(): JSX.Element {
         return (
             <button onClick={() => {
-                updateEntry(client, props.jwt, entries[selectIndex], upPayload)
-                    .then((response: StorageEntry) => {
-                        if (keyNameFromPath(displayEntry.getKeyPath()) === keyNameFromPath(entries[selectIndex].getKeyPath())) {
-                            readEntry(client, props.jwt, entries[selectIndex])
-                                .then(response => {
-                                    updateDisplay(response);
-                                })
-                                .catch(err => {
-                                    alert(err);
-                                });
-                        }
+                let currentKey = entries[selectIndex];
+                updateEntry(client, props.jwt, currentKey, upPayload)
+                    .then(() => {
+                        readEntry(client, props.jwt, currentKey)
+                            .then((entry: StorageEntry) => {
+                                updateDisplay(entry);
+                            })
+                            .catch(err => {
+                                alert(err);
+                            });
                     });
             }}>Update Entry</button>
         )
@@ -131,19 +132,20 @@ export const StoragePanel: React.FC<Props> = (props) => {
     function deleteEntryButton(): JSX.Element {
         return (
             <button onClick={() => {
-                let oldEntry = entries[selectIndex];
-                deleteEntry(client, props.jwt, oldEntry)
+                let currentKey: string = entries[selectIndex];
+                deleteEntry(client, props.jwt, currentKey)
                     .then(() => {
-                        entries.splice(entries.indexOf(oldEntry), 1);
+                        entries.splice(entries.indexOf(currentKey), 1);
                         updateEntries([...entries]);
 
                         // logic to show entry above the deleted one in the display panel
-                        if (keyNameFromPath(displayEntry.getKeyPath()) === keyNameFromPath(oldEntry.getKeyPath())) {
+                        if (keyNameFromPath(displayEntry.getKeyPath()) === currentKey) {
                             let newIndex = Math.max(selectIndex - 1, 0);
                             updateIndex(newIndex);
                             if (entries.length > 0) {
-                                updateSelected(keyNameFromPath(entries[newIndex].getKeyPath()));
-                                readEntry(client, props.jwt, entries[selectIndex])
+                                let newKey = entries[newIndex];
+                                updateSelected(newKey);
+                                readEntry(client, props.jwt, newKey)
                                     .then(response => {
                                         updateDisplay(response);
                                     })

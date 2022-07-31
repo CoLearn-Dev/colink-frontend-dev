@@ -1,4 +1,4 @@
-/* TEMPORARY FILE - will convert to npm package in the future */
+/* TEMPORARY FILE - will convert to npm package in the future via colink-sdk-a-js-dev */
 
 import { CoreInfo, Empty, UserConsent, Jwt, GenerateTokenRequest, StorageEntry, StorageEntries, ReadKeysRequest } from '../proto/colink_pb';
 import { CoLinkClient } from '../proto/ColinkServiceClientPb';
@@ -17,10 +17,20 @@ function getClient(input: string | CoLinkClient): CoLinkClient {
     }
 }
 
-function getMetadata (jwt: string) {
+function getMetadata (jwt: string): {} {
     // set metadata with admin token
     let meta = {'authorization': jwt};
     return meta
+}
+
+function getNameEntry (input: string | StorageEntry): StorageEntry {
+    if (typeof input === "string") {
+        let entry: StorageEntry = new StorageEntry();
+        entry.setKeyName(input);
+        return entry;
+    } else {
+        return input;
+    }
 }
 
 /* Handles USER DATA (private keys, Jwts, etc) */
@@ -139,7 +149,7 @@ export function keyNameFromPath(keyPath: string): string {
     throw Error("Error in keyPath parsing");
 }
 
-function lastKeyNameFromPath(keyPath: string) {
+function lastKeyNameFromPath(keyPath: string): string {
     const pattern = /::(.+)@/;
     let matches = keyPath.match(pattern);
     if (matches != null) {
@@ -149,7 +159,7 @@ function lastKeyNameFromPath(keyPath: string) {
         }
         return match.split(":").slice(-1)[0];
     }
-        
+    throw Error("Error in keyPath parsing");
 }
 
 export async function createEntry(address: string | CoLinkClient, jwt: string, keyname: string, payload: string): Promise<StorageEntry> {
@@ -172,11 +182,12 @@ export async function createEntry(address: string | CoLinkClient, jwt: string, k
     return Promise.resolve(newEntry);
 }
 
-export async function readEntry(address: string | CoLinkClient, jwt: string, entry: StorageEntry): Promise<StorageEntry> {
+export async function readEntry(address: string | CoLinkClient, jwt: string, entry: string | StorageEntry): Promise<StorageEntry> {
     let client: CoLinkClient = getClient(address);
+    let nameEntry: StorageEntry = getNameEntry(entry);
     
     let request: StorageEntries = new StorageEntries();
-    request.addEntries(entry);
+    request.addEntries(nameEntry);
     let meta = getMetadata(jwt);
 
     let response: StorageEntry = new StorageEntry();
@@ -190,11 +201,15 @@ export async function readEntry(address: string | CoLinkClient, jwt: string, ent
     return Promise.resolve(response);
 }
 
-export async function updateEntry(address: string | CoLinkClient, jwt: string, oldEntry: StorageEntry, newContents: string): Promise<StorageEntry> {
+export async function updateEntry(address: string | CoLinkClient, jwt: string, oldEntry: string | StorageEntry, newContents: string): Promise<StorageEntry> {
     let client: CoLinkClient = getClient(address);
     
     let request: StorageEntry = new StorageEntry();
-    request.setKeyName(oldEntry.getKeyName());
+    if (typeof oldEntry === "string") {
+        request.setKeyName(oldEntry);
+    } else {
+        request.setKeyName(keyNameFromPath(oldEntry.getKeyPath()));
+    }
     request.setPayload(newContents);
     
     let meta = getMetadata(jwt);
@@ -210,11 +225,15 @@ export async function updateEntry(address: string | CoLinkClient, jwt: string, o
     return Promise.resolve(response);
 }
 
-export async function deleteEntry(address: string | CoLinkClient, jwt: string, oldEntry: StorageEntry) {
+export async function deleteEntry(address: string | CoLinkClient, jwt: string, oldEntry: string | StorageEntry) {
     let client: CoLinkClient = getClient(address);
     
     let request: StorageEntry = new StorageEntry();
-    request.setKeyName(keyNameFromPath(oldEntry.getKeyPath()));
+    if (typeof oldEntry === "string") {
+        request.setKeyName(oldEntry);
+    } else {
+        request.setKeyName(keyNameFromPath(oldEntry.getKeyPath()));
+    }
 
     let meta = getMetadata(jwt);
 
@@ -224,7 +243,7 @@ export async function deleteEntry(address: string | CoLinkClient, jwt: string, o
         });
 }
 
-export async function getUserStorageEntries(address: string | CoLinkClient, jwt: string) {
+export async function getUserStorageEntries(address: string | CoLinkClient, jwt: string): Promise<StorageEntry[]> {
     let client: CoLinkClient = getClient(address);
 
     let encodedId: string = jwt.split(".")[1];
@@ -233,28 +252,36 @@ export async function getUserStorageEntries(address: string | CoLinkClient, jwt:
     let entries: StorageEntry[] = []
     let meta = getMetadata(jwt);
 
-    const updateEntries = async (prefix: string) => {
+    async function updateEntries(prefix: string): Promise<string[]> {
         let req: ReadKeysRequest = new ReadKeysRequest();
         req.setPrefix(prefix);
-        req.setIncludeHistory(true);
+        req.setIncludeHistory(false);
 
+
+        let newPrefixes: string[] = [];
         await client.readKeys(req, meta)
             .then(response => {
                 let newEntries: StorageEntry[] = response.getEntriesList();
-                for (let entry of newEntries) {
-                    entries.push(entry);
-                }
-                Promise.all(newEntries.map((entry: StorageEntry) => {updateEntries(prefix + ":" + lastKeyNameFromPath(entry.getKeyPath()))}))
-                    .then(() => {
-                        entries.sort((a, b) => { return keyNameFromPath(a.getKeyPath()) < keyNameFromPath(b.getKeyPath()) ? -1 : 1 });
-                    })
+                entries = entries.concat(newEntries);
+                newPrefixes = newEntries.map((entry: StorageEntry) => {return prefix + ":" + lastKeyNameFromPath(entry.getKeyPath());});
             })
             .catch(err => {
                 alert(err);
             });
+
+        return newPrefixes;
     }
 
-    updateEntries(userId + ":");
-    return Promise.resolve(entries);
+    let startingPrefix = userId + ":";
+    let keyPrefixes: string[] = [startingPrefix];
+
+    while (keyPrefixes.length > 0) {
+        for (let prefix of keyPrefixes) {
+            keyPrefixes = keyPrefixes.concat(await updateEntries(prefix)).slice(1);
+        }
+    }
+    
+    entries.sort((a, b) => { return keyNameFromPath(a.getKeyPath()) < keyNameFromPath(b.getKeyPath()) ? -1 : 1 });
+    return entries;
 }
 

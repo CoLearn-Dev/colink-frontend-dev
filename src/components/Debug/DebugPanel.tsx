@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { readFromFile } from '../../utils'
 import styles from './DebugPanel.module.css'
 
@@ -16,8 +16,8 @@ export const DebugPanel: React.FC<Props> = (props) => {
                 <div className={styles.statusInner}>
                     <div className={styles.statusField}>
                         <h3>Status:</h3>
-                        Host Token: {props.hostToken != "" ? <span>Set</span> : <span>Not set</span>}<br />
-                        Jwt: {props.jwt != "" ? <span>Set</span> : <span>Not set</span>}
+                        Host Token: {props.hostToken != "" ? <span>Set</span> : <span>Not Set</span>}<br />
+                        Jwt: {props.jwt != "" ? <span>Set</span> : <span>Not Set</span>}
                     </div>
                     <div className={styles.statusField}>
                         <div>
