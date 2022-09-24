@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { client } from '../../App';
 import { createEntry, readEntry, updateEntry, deleteEntry, getUserStorageEntries } from '../../lib';
 import { keyNameFromPath, storageEntryToJSON } from '../../lib';
 import { StorageEntry } from '../../../proto/colink_pb';
 import { createDownloadHref } from '../../utils';
 import styles from './StoragePanel.module.css'
+import { CoLinkClient } from '../../../proto/ColinkServiceClientPb';
 
 interface Props {
+    client: CoLinkClient,
     hostToken: string,
     jwt: string
 }
@@ -34,7 +35,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
 
     useEffect(() => {
         async function getData() {
-            await getUserStorageEntries(client, props.jwt)
+            await getUserStorageEntries(props.client, props.jwt)
                 .then((entries: StorageEntry[]) => {
                     let keys: string[] = entries.map((entry: StorageEntry) => {return keyNameFromPath(entry.getKeyPath());});
                     updateEntries(keys);
@@ -60,7 +61,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
                 <span>Payload:</span>
                 <textarea onChange={(e) => { updatePayload(e.target.value); }}></textarea><br />
                 <button onClick={() => {
-                    createEntry(client, props.jwt, key, payload)
+                    createEntry(props.client, props.jwt, key, payload)
                         .then((entry: StorageEntry) => {
                             if (entry.toString() !== defEmpty.toString()) {
                                 entries.push(key);
@@ -84,7 +85,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
                     onClick={() => {
                         updateSelected(keyName);
                         updateIndex(i);
-                        readEntry(client, props.jwt, keyName)
+                        readEntry(props.client, props.jwt, keyName)
                             .then((entry: StorageEntry) => {
                                 updateDisplay(entry);
                             });
@@ -115,9 +116,9 @@ export const StoragePanel: React.FC<Props> = (props) => {
         return (
             <button onClick={() => {
                 let currentKey = entries[selectIndex];
-                updateEntry(client, props.jwt, currentKey, upPayload)
+                updateEntry(props.client, props.jwt, currentKey, upPayload)
                     .then(() => {
-                        readEntry(client, props.jwt, currentKey)
+                        readEntry(props.client, props.jwt, currentKey)
                             .then((entry: StorageEntry) => {
                                 updateDisplay(entry);
                             })
@@ -133,7 +134,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
         return (
             <button onClick={() => {
                 let currentKey: string = entries[selectIndex];
-                deleteEntry(client, props.jwt, currentKey)
+                deleteEntry(props.client, props.jwt, currentKey)
                     .then(() => {
                         entries.splice(entries.indexOf(currentKey), 1);
                         updateEntries([...entries]);
@@ -145,7 +146,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
                             if (entries.length > 0) {
                                 let newKey = entries[newIndex];
                                 updateSelected(newKey);
-                                readEntry(client, props.jwt, newKey)
+                                readEntry(props.client, props.jwt, newKey)
                                     .then(response => {
                                         updateDisplay(response);
                                     })

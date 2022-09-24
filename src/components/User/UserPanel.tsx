@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp } from '../../lib';
 import { readFromFile, createDownloadHref } from '../../utils';
-import { client } from '../../App';
+import { ethers } from 'ethers';
 import styles from './UserPanel.module.css'
+import { CoLinkClient } from '../../../proto/ColinkServiceClientPb';
 
 interface Props {
+    client: CoLinkClient,
     hostToken: string,
     jwt: string,
     setJwt: Function,
 }
+
+declare let window: any;
 
 async function getUserData(method: Function, callbacks: [Function | null, Function | null], args: Array<any>) {
     await method(...args)
@@ -26,6 +30,41 @@ async function getUserData(method: Function, callbacks: [Function | null, Functi
         });
 }
 
+async function signMessage() {
+    let message = "test"
+    try {
+        // Connect to metamask wallet
+        if (!window.ethereum)
+          throw new Error("No crypto wallet found. Please install it.");
+    
+        await window.ethereum.request({
+            method: "eth_requestAccounts"
+        });
+
+        // Sign message
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const signature = await signer.signMessage(message);
+        const address = await signer.getAddress();
+
+        console.log(signature);
+    
+        // Verify signature (recover signer address --> public key)
+        const signerAddress = await ethers.utils.verifyMessage(message, signature);
+        if (signerAddress !== address) {
+            alert("issue with signature")
+        } else {
+            console.log("signature matches")
+        }
+
+        // Verifying in rust: https://stackoverflow.com/questions/67278243/how-to-verify-the-signature-made-by-metamask-for-ethereum
+        // More on EIP-712: https://eips.ethereum.org/EIPS/eip-712 
+
+      } catch (err) {
+        alert(err);
+      }
+}
+
 export const UserPanel: React.FC<Props> = (props) => {
     const [privateKey, updateKey] = useState("");
     const [pkFile, updatePkFile] = useState(false);
@@ -35,28 +74,38 @@ export const UserPanel: React.FC<Props> = (props) => {
     useEffect(() => {
         // Only generate new Jwt by using a private key from file
         if (pkFile) {
-            getUserData(generateJwtFromKey, [null, props.setJwt], [client, privateKey, props.hostToken]);
+            getUserData(generateJwtFromKey, [null, props.setJwt], [props.client, privateKey, props.hostToken]);
         }
     }, [privateKey])
 
     function loginPanel(): JSX.Element {
         return (
-            <div className={styles.modalInner}>
-                <div className={styles.modalField}>
-                    <h4>Use Pre-existing Private Key</h4>
-                    <input type="file" onChange={(e) => { 
-                        updatePkFile(true);
-                        readFromFile(e, updateKey); 
-                        }} />
+            <div>
+                <div className={styles.modalInner}>
+                    <div className={styles.modalField}>
+                        <h4>Use Pre-existing Private Key</h4>
+                        <input type="file" onChange={(e) => { 
+                            updatePkFile(true);
+                            readFromFile(e, updateKey); 
+                            }} />
+                    </div>
+                    <div className={styles.modalField}>
+                        <h4>Generate New Private Key + JWT</h4>
+                        <button onClick={() => getUserData(generateKeyAndJwt, [updateKey, props.setJwt],
+                            [props.client, props.hostToken])}>Generate JWT</button>
+                    </div>
+                    <div className={styles.modalField}>
+                        <h4>Use Pre-existing JWT</h4>
+                        <input type="file" onChange={(e) => { readFromFile(e, props.setJwt) }} />
+                    </div>
                 </div>
-                <div className={styles.modalField}>
-                    <h4>Generate New Private Key + JWT</h4>
-                    <button onClick={() => getUserData(generateKeyAndJwt, [updateKey, props.setJwt],
-                        [client, props.hostToken])}>Generate JWT</button>
-                </div>
-                <div className={styles.modalField}>
-                    <h4>Use Pre-existing JWT</h4>
-                    <input type="file" onChange={(e) => { readFromFile(e, props.setJwt) }} />
+                <div className={styles.modalInner}>
+                    <div className={styles.modalField}></div>
+                    <div className={styles.modalField}>
+                        <h4>Metamask Login</h4>
+                        <button onClick={() => signMessage()}>Connect Wallet</button>
+                    </div>
+                    <div className={styles.modalField}></div>
                 </div>
             </div>
         )
@@ -64,18 +113,18 @@ export const UserPanel: React.FC<Props> = (props) => {
 
     function userSettings(): JSX.Element {
         return (
-            <div>
-                <div>
+            <div className={styles.modalInner}>
+                <div  className={styles.modalField}>
                     <h4>Refresh JWT (# Days)</h4>
                     <input type="text" onChange={(e) => { updateTime(parseInt(e.target.value)); }}></input><br /><br />
                     <button onClick={() => getUserData(generateToken, [null, props.setJwt], 
-                        [client, props.jwt, daysToTimestamp(time)])}>Refresh JWT</button>
+                        [props.client, props.jwt, daysToTimestamp(time)])}>Refresh JWT</button>
                 </div>
-                <div>
+                <div  className={styles.modalField}>
                     <h4>Generate Guest JWT (# Days)</h4>
                     <input type="text" onChange={(e) => { updateTime(parseInt(e.target.value)); }}></input><br /><br />
                     <button onClick={() => getUserData(generateKeyAndJwt, [null, updateGuestJwt], 
-                        [client, props.hostToken, daysToTimestamp(time)])}>Generate Guest JWT</button>
+                        [props.client, props.hostToken, daysToTimestamp(time)])}>Generate Guest JWT</button>
                 </div>
             </div>
         )
