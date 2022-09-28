@@ -55,6 +55,9 @@ The frontend UI is hosted at http://localhost:3000
     * If testing locally, specify the envoy proxy as the hostname (in the above setup, http://localhost:8000)
 * User Login component allows an individual to create a JWT with their own ECDSA private key or by generating a new private key. Generated credentials are displayed after creation.
 
+### Deploy Github Pages
+* To deploy the frontend application to Github pages, run `npm run deploy`
+
 ## General Layout
 
 ### node_modules
