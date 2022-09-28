@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { createEntry, readEntry, updateEntry, deleteEntry, getUserStorageEntries } from '../../lib';
 import { keyNameFromPath, storageEntryToJSON } from '../../lib';
-import { StorageEntry } from '../../../proto/colink_pb';
+import { StorageEntry } from '../../../proto_js/colink_pb';
 import { createDownloadHref } from '../../utils';
 import styles from './StoragePanel.module.css'
-import { CoLinkClient } from '../../../proto/ColinkServiceClientPb';
+import { CoLinkClient } from '../../../proto_js/ColinkServiceClientPb';
 
 interface Props {
     client: CoLinkClient,
@@ -57,9 +57,9 @@ export const StoragePanel: React.FC<Props> = (props) => {
             <div className={styles.modalField}>
                 <h3>Create Entry</h3>
                 <span>Key:</span>
-                <input type="text" onChange={(e) => { updateKey(e.target.value); }}></input><br />
+                <input type="text" value={key} onChange={(e) => { updateKey(e.target.value); }}></input><br />
                 <span>Payload:</span>
-                <textarea onChange={(e) => { updatePayload(e.target.value); }}></textarea><br />
+                <textarea value={payload} onChange={(e) => { updatePayload(e.target.value); }}></textarea><br />
                 <button onClick={() => {
                     createEntry(props.client, props.jwt, key, payload)
                         .then((entry: StorageEntry) => {
@@ -68,6 +68,8 @@ export const StoragePanel: React.FC<Props> = (props) => {
                                 entries.sort();
                                 updateEntries([...entries]);
                             }
+                            updateKey("");
+                            updatePayload("");
                         })
                         .catch(err => {
                             alert(err);
@@ -83,12 +85,18 @@ export const StoragePanel: React.FC<Props> = (props) => {
             return entries.map((keyName: string, i: number) => {
                 return (<tr key={keyName}
                     onClick={() => {
-                        updateSelected(keyName);
-                        updateIndex(i);
-                        readEntry(props.client, props.jwt, keyName)
+                        if (selectKey === keyName) {
+                            updateSelected("");
+                            updateIndex(-1);
+                            updateDisplay(defEmpty)
+                        } else {
+                            updateSelected(keyName);
+                            updateIndex(i);
+                            readEntry(props.client, props.jwt, keyName)
                             .then((entry: StorageEntry) => {
                                 updateDisplay(entry);
                             });
+                        }
                     }}>
                     <th style={keyName == selectKey ? { backgroundColor: "#DDDDDD", paddingLeft: numColons(keyName) } :
                         { paddingLeft: numColons(keyName) }}>{keyName}
@@ -126,6 +134,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
                                 alert(err);
                             });
                     });
+                updateNewPayload("");
             }}>Update Entry</button>
         )
     }
@@ -196,7 +205,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
                     <div className={styles.modalField}>
                         {createEntryList()}
                         <div style={{ position: "absolute", bottom: "20px" }}>
-                            <textarea onChange={(e) => { updateNewPayload(e.target.value); }}></textarea><br /><br />
+                            <textarea value={upPayload} onChange={(e) => { updateNewPayload(e.target.value); }}></textarea><br /><br />
                             <div className={styles.buttonGroup}>
                                 {updateEntryButton()}
                                 {deleteEntryButton()}

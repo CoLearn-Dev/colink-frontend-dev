@@ -12,5 +12,8 @@ which node || (echo "node is not installed, may ask for sudo access" && \
 brew list envoy || (echo "envoy is not installed, may ask for sudo access" && brew install envoy)
 npm install
 
+# Update proto js/ts definitions
+./scripts/proto_gen.sh
+
 # Start envoy proxy + frontend service
 envoy -c envoy.yaml & npm start

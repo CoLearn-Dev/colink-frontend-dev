@@ -1,0 +1,17 @@
+syntax = "proto3";
+package colink_registry;
+
+message Registry {
+    string address = 1;
+    string guest_jwt = 2;
+}
+
+message Registries {
+    repeated Registry registries = 1;
+}
+
+message UserRecord {
+    string user_id = 1;
+    string core_addr = 2;
+    string guest_jwt = 3;
+}

@@ -3,7 +3,7 @@ import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToT
 import { readFromFile, createDownloadHref } from '../../utils';
 import { ethers } from 'ethers';
 import styles from './UserPanel.module.css'
-import { CoLinkClient } from '../../../proto/ColinkServiceClientPb';
+import { CoLinkClient } from '../../../proto_js/ColinkServiceClientPb';
 
 interface Props {
     client: CoLinkClient,
@@ -16,16 +16,26 @@ declare let window: any;
 
 async function getUserData(method: Function, callbacks: [Function | null, Function | null], args: Array<any>) {
     await method(...args)
-        .then((res: UserData) => {
+        .then((res: string | UserData) => {
             let setPrivateKey: Function | null = callbacks[0];
             let setJwt: Function | null = callbacks[1];
-
-            if (setPrivateKey !== null) {
-                setPrivateKey(res.privateKey);
+            
+            // Refresh JWT
+            if (typeof res === 'string') {
+                if (setJwt !== null) {
+                    setJwt(res);
+                }
             }
 
-            if (setJwt !== null) {
-                setJwt(res.userJwt);
+            // Guest JWT
+            else {
+                if (setPrivateKey !== null) {
+                    setPrivateKey(res.privateKey);
+                }
+    
+                if (setJwt !== null) {
+                    setJwt(res.userJwt);
+                }
             }
         });
 }
@@ -68,7 +78,8 @@ async function signMessage() {
 export const UserPanel: React.FC<Props> = (props) => {
     const [privateKey, updateKey] = useState("");
     const [pkFile, updatePkFile] = useState(false);
-    const [time, updateTime] = useState(0);
+    const [refreshTime, updateRefreshTime] = useState(0);
+    const [guestTime, updateGuestTime] = useState(0);
     const [guestJwt, updateGuestJwt] = useState("");
 
     useEffect(() => {
@@ -79,6 +90,7 @@ export const UserPanel: React.FC<Props> = (props) => {
     }, [privateKey])
 
     function loginPanel(): JSX.Element {
+
         return (
             <div>
                 <div className={styles.modalInner}>
@@ -99,14 +111,15 @@ export const UserPanel: React.FC<Props> = (props) => {
                         <input type="file" onChange={(e) => { readFromFile(e, props.setJwt) }} />
                     </div>
                 </div>
-                <div className={styles.modalInner}>
+                {/* TODO: Implement Metamask connect once backend is updated */}
+                {/* <div className={styles.modalInner}>
                     <div className={styles.modalField}></div>
                     <div className={styles.modalField}>
                         <h4>Metamask Login</h4>
                         <button onClick={() => signMessage()}>Connect Wallet</button>
                     </div>
                     <div className={styles.modalField}></div>
-                </div>
+                </div> */}
             </div>
         )
     }
@@ -116,15 +129,15 @@ export const UserPanel: React.FC<Props> = (props) => {
             <div className={styles.modalInner}>
                 <div  className={styles.modalField}>
                     <h4>Refresh JWT (# Days)</h4>
-                    <input type="text" onChange={(e) => { updateTime(parseInt(e.target.value)); }}></input><br /><br />
+                    <input type="text" value={refreshTime === 0 ? '' : refreshTime.toString()} onChange={(e) => { updateRefreshTime(parseInt(e.target.value)); }}></input><br /><br />
                     <button onClick={() => getUserData(generateToken, [null, props.setJwt], 
-                        [props.client, props.jwt, daysToTimestamp(time)])}>Refresh JWT</button>
+                        [props.client, props.jwt, daysToTimestamp(refreshTime)]).then(() => updateRefreshTime(0))}>Refresh JWT</button>
                 </div>
                 <div  className={styles.modalField}>
                     <h4>Generate Guest JWT (# Days)</h4>
-                    <input type="text" onChange={(e) => { updateTime(parseInt(e.target.value)); }}></input><br /><br />
+                    <input type="text" value={guestTime === 0 ? '' : guestTime.toString()} onChange={(e) => { updateGuestTime(parseInt(e.target.value)); }}></input><br /><br />
                     <button onClick={() => getUserData(generateKeyAndJwt, [null, updateGuestJwt], 
-                        [props.client, props.hostToken, daysToTimestamp(time)])}>Generate Guest JWT</button>
+                        [props.client, props.hostToken, daysToTimestamp(guestTime)]).then(() => updateGuestTime(0))}>Generate Guest JWT</button>
                 </div>
             </div>
         )
@@ -159,6 +172,10 @@ export const UserPanel: React.FC<Props> = (props) => {
         updatePkFile(false);
         updateGuestJwt("");
         props.setJwt("");
+    }
+
+    if (props.client === null || props.hostToken === '') {
+        return (<div></div>)
     }
 
     return (

@@ -13,6 +13,8 @@ interface Props {
 export const DebugPanel: React.FC<Props> = (props) => {
     const [locHostname, updateLocHostname] = useState("");
     const [locHostToken, updateLocHostToken] = useState("");
+    const [fileInputField, updateFileField] = useState("");
+    
 
     return (
         <div>
@@ -28,12 +30,14 @@ export const DebugPanel: React.FC<Props> = (props) => {
                     <div className={styles.statusField}>
                         <div>
                             <h3>Client Hostname:</h3>
-                            <input type="text" onChange={(e) => { updateLocHostname(e.target.value); }}></input><br />
+                            <input type="text" value={locHostname} onChange={(e) => { updateLocHostname(e.target.value); }}></input><br />
                             <h3>Host Token:</h3>
-                            <input type="file" onChange={(e) => {readFromFile(e, updateLocHostToken);}} /><br /><br />
+                            <input type="file" key={fileInputField || ''} onChange={(e) => {readFromFile(e, updateLocHostToken);}} /><br /><br />
                             <button onClick={()=>{
                                 props.setHostname(locHostname);
                                 props.setToken(locHostToken);
+                                updateLocHostname("");
+                                updateFileField(Math.random().toString(36));
                             }}>Update Client</button>
                         </div>
                     </div>

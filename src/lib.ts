@@ -1,7 +1,7 @@
 /* TEMPORARY FILE - will convert to npm package in the future via colink-sdk-a-js-dev */
 
-import { CoreInfo, Empty, UserConsent, Jwt, GenerateTokenRequest, StorageEntry, StorageEntries, ReadKeysRequest } from '../proto/colink_pb';
-import { CoLinkClient } from '../proto/ColinkServiceClientPb';
+import { CoreInfo, Empty, UserConsent, Jwt, GenerateTokenRequest, StorageEntry, StorageEntries, ReadKeysRequest } from '../proto_js/colink_pb';
+import { CoLinkClient } from '../proto_js/ColinkServiceClientPb';
 import secp256k1 from 'secp256k1';
 import crypto from 'crypto';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Decision, Participant, Task } from '../../../proto/colink_pb';
+import { Decision, Participant, Task } from '../../../proto_js/colink_pb';
 import styles from './Computation.module.css'
 
 interface Props {

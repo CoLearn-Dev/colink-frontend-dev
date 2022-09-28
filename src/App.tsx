@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CoLinkClient } from '../proto/ColinkServiceClientPb';
+import { CoLinkClient } from '../proto_js/ColinkServiceClientPb';
 import { UserPanel } from './components/User/UserPanel'
 import { StoragePanel } from './components/Storage/StoragePanel'
 import { Computation } from './components/Computation/Computation'
@@ -16,7 +16,6 @@ function App(): JSX.Element {
 
   useEffect(() => {
     setClient(new CoLinkClient(clientHostname));
-    console.log("rawr")
   }, [clientHostname]);
 
   return (

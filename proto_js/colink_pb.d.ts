@@ -440,3 +440,29 @@ export namespace CoLinkInternalTaskIDList {
   }
 }
 
+export class ProtocolOperatorInstance extends jspb.Message {
+  getInstanceId(): string;
+  setInstanceId(value: string): ProtocolOperatorInstance;
+
+  getProtocolName(): string;
+  setProtocolName(value: string): ProtocolOperatorInstance;
+
+  getUserId(): string;
+  setUserId(value: string): ProtocolOperatorInstance;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ProtocolOperatorInstance.AsObject;
+  static toObject(includeInstance: boolean, msg: ProtocolOperatorInstance): ProtocolOperatorInstance.AsObject;
+  static serializeBinaryToWriter(message: ProtocolOperatorInstance, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ProtocolOperatorInstance;
+  static deserializeBinaryFromReader(message: ProtocolOperatorInstance, reader: jspb.BinaryReader): ProtocolOperatorInstance;
+}
+
+export namespace ProtocolOperatorInstance {
+  export type AsObject = {
+    instanceId: string,
+    protocolName: string,
+    userId: string,
+  }
+}
+

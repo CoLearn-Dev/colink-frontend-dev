@@ -13,7 +13,7 @@
 
 import * as grpcWeb from 'grpc-web';
 
-import * as colink$server$dev_proto_colink_pb from './colink_pb';
+import * as proto_colink_pb from './colink_pb';
 
 
 export class CoLinkClient {
@@ -38,29 +38,29 @@ export class CoLinkClient {
   methodDescriptorGenerateToken = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/GenerateToken',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.GenerateTokenRequest,
-    colink$server$dev_proto_colink_pb.Jwt,
-    (request: colink$server$dev_proto_colink_pb.GenerateTokenRequest) => {
+    proto_colink_pb.GenerateTokenRequest,
+    proto_colink_pb.Jwt,
+    (request: proto_colink_pb.GenerateTokenRequest) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.Jwt.deserializeBinary
+    proto_colink_pb.Jwt.deserializeBinary
   );
 
   generateToken(
-    request: colink$server$dev_proto_colink_pb.GenerateTokenRequest,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.Jwt>;
+    request: proto_colink_pb.GenerateTokenRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.Jwt>;
 
   generateToken(
-    request: colink$server$dev_proto_colink_pb.GenerateTokenRequest,
+    request: proto_colink_pb.GenerateTokenRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Jwt) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.Jwt>;
+               response: proto_colink_pb.Jwt) => void): grpcWeb.ClientReadableStream<proto_colink_pb.Jwt>;
 
   generateToken(
-    request: colink$server$dev_proto_colink_pb.GenerateTokenRequest,
+    request: proto_colink_pb.GenerateTokenRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Jwt) => void) {
+               response: proto_colink_pb.Jwt) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -81,29 +81,29 @@ export class CoLinkClient {
   methodDescriptorImportUser = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/ImportUser',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.UserConsent,
-    colink$server$dev_proto_colink_pb.Jwt,
-    (request: colink$server$dev_proto_colink_pb.UserConsent) => {
+    proto_colink_pb.UserConsent,
+    proto_colink_pb.Jwt,
+    (request: proto_colink_pb.UserConsent) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.Jwt.deserializeBinary
+    proto_colink_pb.Jwt.deserializeBinary
   );
 
   importUser(
-    request: colink$server$dev_proto_colink_pb.UserConsent,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.Jwt>;
+    request: proto_colink_pb.UserConsent,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.Jwt>;
 
   importUser(
-    request: colink$server$dev_proto_colink_pb.UserConsent,
+    request: proto_colink_pb.UserConsent,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Jwt) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.Jwt>;
+               response: proto_colink_pb.Jwt) => void): grpcWeb.ClientReadableStream<proto_colink_pb.Jwt>;
 
   importUser(
-    request: colink$server$dev_proto_colink_pb.UserConsent,
+    request: proto_colink_pb.UserConsent,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Jwt) => void) {
+               response: proto_colink_pb.Jwt) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -124,29 +124,29 @@ export class CoLinkClient {
   methodDescriptorCreateEntry = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/CreateEntry',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.StorageEntry,
-    colink$server$dev_proto_colink_pb.StorageEntry,
-    (request: colink$server$dev_proto_colink_pb.StorageEntry) => {
+    proto_colink_pb.StorageEntry,
+    proto_colink_pb.StorageEntry,
+    (request: proto_colink_pb.StorageEntry) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.StorageEntry.deserializeBinary
+    proto_colink_pb.StorageEntry.deserializeBinary
   );
 
   createEntry(
-    request: colink$server$dev_proto_colink_pb.StorageEntry,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.StorageEntry>;
+    request: proto_colink_pb.StorageEntry,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.StorageEntry>;
 
   createEntry(
-    request: colink$server$dev_proto_colink_pb.StorageEntry,
+    request: proto_colink_pb.StorageEntry,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntry) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.StorageEntry>;
+               response: proto_colink_pb.StorageEntry) => void): grpcWeb.ClientReadableStream<proto_colink_pb.StorageEntry>;
 
   createEntry(
-    request: colink$server$dev_proto_colink_pb.StorageEntry,
+    request: proto_colink_pb.StorageEntry,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntry) => void) {
+               response: proto_colink_pb.StorageEntry) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -167,29 +167,29 @@ export class CoLinkClient {
   methodDescriptorReadEntries = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/ReadEntries',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.StorageEntries,
-    colink$server$dev_proto_colink_pb.StorageEntries,
-    (request: colink$server$dev_proto_colink_pb.StorageEntries) => {
+    proto_colink_pb.StorageEntries,
+    proto_colink_pb.StorageEntries,
+    (request: proto_colink_pb.StorageEntries) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.StorageEntries.deserializeBinary
+    proto_colink_pb.StorageEntries.deserializeBinary
   );
 
   readEntries(
-    request: colink$server$dev_proto_colink_pb.StorageEntries,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.StorageEntries>;
+    request: proto_colink_pb.StorageEntries,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.StorageEntries>;
 
   readEntries(
-    request: colink$server$dev_proto_colink_pb.StorageEntries,
+    request: proto_colink_pb.StorageEntries,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntries) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.StorageEntries>;
+               response: proto_colink_pb.StorageEntries) => void): grpcWeb.ClientReadableStream<proto_colink_pb.StorageEntries>;
 
   readEntries(
-    request: colink$server$dev_proto_colink_pb.StorageEntries,
+    request: proto_colink_pb.StorageEntries,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntries) => void) {
+               response: proto_colink_pb.StorageEntries) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -210,29 +210,29 @@ export class CoLinkClient {
   methodDescriptorUpdateEntry = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/UpdateEntry',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.StorageEntry,
-    colink$server$dev_proto_colink_pb.StorageEntry,
-    (request: colink$server$dev_proto_colink_pb.StorageEntry) => {
+    proto_colink_pb.StorageEntry,
+    proto_colink_pb.StorageEntry,
+    (request: proto_colink_pb.StorageEntry) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.StorageEntry.deserializeBinary
+    proto_colink_pb.StorageEntry.deserializeBinary
   );
 
   updateEntry(
-    request: colink$server$dev_proto_colink_pb.StorageEntry,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.StorageEntry>;
+    request: proto_colink_pb.StorageEntry,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.StorageEntry>;
 
   updateEntry(
-    request: colink$server$dev_proto_colink_pb.StorageEntry,
+    request: proto_colink_pb.StorageEntry,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntry) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.StorageEntry>;
+               response: proto_colink_pb.StorageEntry) => void): grpcWeb.ClientReadableStream<proto_colink_pb.StorageEntry>;
 
   updateEntry(
-    request: colink$server$dev_proto_colink_pb.StorageEntry,
+    request: proto_colink_pb.StorageEntry,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntry) => void) {
+               response: proto_colink_pb.StorageEntry) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -253,29 +253,29 @@ export class CoLinkClient {
   methodDescriptorDeleteEntry = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/DeleteEntry',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.StorageEntry,
-    colink$server$dev_proto_colink_pb.StorageEntry,
-    (request: colink$server$dev_proto_colink_pb.StorageEntry) => {
+    proto_colink_pb.StorageEntry,
+    proto_colink_pb.StorageEntry,
+    (request: proto_colink_pb.StorageEntry) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.StorageEntry.deserializeBinary
+    proto_colink_pb.StorageEntry.deserializeBinary
   );
 
   deleteEntry(
-    request: colink$server$dev_proto_colink_pb.StorageEntry,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.StorageEntry>;
+    request: proto_colink_pb.StorageEntry,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.StorageEntry>;
 
   deleteEntry(
-    request: colink$server$dev_proto_colink_pb.StorageEntry,
+    request: proto_colink_pb.StorageEntry,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntry) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.StorageEntry>;
+               response: proto_colink_pb.StorageEntry) => void): grpcWeb.ClientReadableStream<proto_colink_pb.StorageEntry>;
 
   deleteEntry(
-    request: colink$server$dev_proto_colink_pb.StorageEntry,
+    request: proto_colink_pb.StorageEntry,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntry) => void) {
+               response: proto_colink_pb.StorageEntry) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -296,29 +296,29 @@ export class CoLinkClient {
   methodDescriptorReadKeys = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/ReadKeys',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.ReadKeysRequest,
-    colink$server$dev_proto_colink_pb.StorageEntries,
-    (request: colink$server$dev_proto_colink_pb.ReadKeysRequest) => {
+    proto_colink_pb.ReadKeysRequest,
+    proto_colink_pb.StorageEntries,
+    (request: proto_colink_pb.ReadKeysRequest) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.StorageEntries.deserializeBinary
+    proto_colink_pb.StorageEntries.deserializeBinary
   );
 
   readKeys(
-    request: colink$server$dev_proto_colink_pb.ReadKeysRequest,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.StorageEntries>;
+    request: proto_colink_pb.ReadKeysRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.StorageEntries>;
 
   readKeys(
-    request: colink$server$dev_proto_colink_pb.ReadKeysRequest,
+    request: proto_colink_pb.ReadKeysRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntries) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.StorageEntries>;
+               response: proto_colink_pb.StorageEntries) => void): grpcWeb.ClientReadableStream<proto_colink_pb.StorageEntries>;
 
   readKeys(
-    request: colink$server$dev_proto_colink_pb.ReadKeysRequest,
+    request: proto_colink_pb.ReadKeysRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.StorageEntries) => void) {
+               response: proto_colink_pb.StorageEntries) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -339,29 +339,29 @@ export class CoLinkClient {
   methodDescriptorCreateTask = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/CreateTask',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.Task,
-    colink$server$dev_proto_colink_pb.Task,
-    (request: colink$server$dev_proto_colink_pb.Task) => {
+    proto_colink_pb.Task,
+    proto_colink_pb.Task,
+    (request: proto_colink_pb.Task) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.Task.deserializeBinary
+    proto_colink_pb.Task.deserializeBinary
   );
 
   createTask(
-    request: colink$server$dev_proto_colink_pb.Task,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.Task>;
+    request: proto_colink_pb.Task,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.Task>;
 
   createTask(
-    request: colink$server$dev_proto_colink_pb.Task,
+    request: proto_colink_pb.Task,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Task) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.Task>;
+               response: proto_colink_pb.Task) => void): grpcWeb.ClientReadableStream<proto_colink_pb.Task>;
 
   createTask(
-    request: colink$server$dev_proto_colink_pb.Task,
+    request: proto_colink_pb.Task,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Task) => void) {
+               response: proto_colink_pb.Task) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -382,29 +382,29 @@ export class CoLinkClient {
   methodDescriptorConfirmTask = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/ConfirmTask',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.ConfirmTaskRequest,
-    colink$server$dev_proto_colink_pb.Empty,
-    (request: colink$server$dev_proto_colink_pb.ConfirmTaskRequest) => {
+    proto_colink_pb.ConfirmTaskRequest,
+    proto_colink_pb.Empty,
+    (request: proto_colink_pb.ConfirmTaskRequest) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.Empty.deserializeBinary
+    proto_colink_pb.Empty.deserializeBinary
   );
 
   confirmTask(
-    request: colink$server$dev_proto_colink_pb.ConfirmTaskRequest,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.Empty>;
+    request: proto_colink_pb.ConfirmTaskRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.Empty>;
 
   confirmTask(
-    request: colink$server$dev_proto_colink_pb.ConfirmTaskRequest,
+    request: proto_colink_pb.ConfirmTaskRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.Empty>;
+               response: proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<proto_colink_pb.Empty>;
 
   confirmTask(
-    request: colink$server$dev_proto_colink_pb.ConfirmTaskRequest,
+    request: proto_colink_pb.ConfirmTaskRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Empty) => void) {
+               response: proto_colink_pb.Empty) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -425,29 +425,29 @@ export class CoLinkClient {
   methodDescriptorFinishTask = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/FinishTask',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.Task,
-    colink$server$dev_proto_colink_pb.Empty,
-    (request: colink$server$dev_proto_colink_pb.Task) => {
+    proto_colink_pb.Task,
+    proto_colink_pb.Empty,
+    (request: proto_colink_pb.Task) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.Empty.deserializeBinary
+    proto_colink_pb.Empty.deserializeBinary
   );
 
   finishTask(
-    request: colink$server$dev_proto_colink_pb.Task,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.Empty>;
+    request: proto_colink_pb.Task,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.Empty>;
 
   finishTask(
-    request: colink$server$dev_proto_colink_pb.Task,
+    request: proto_colink_pb.Task,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.Empty>;
+               response: proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<proto_colink_pb.Empty>;
 
   finishTask(
-    request: colink$server$dev_proto_colink_pb.Task,
+    request: proto_colink_pb.Task,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Empty) => void) {
+               response: proto_colink_pb.Empty) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -468,29 +468,29 @@ export class CoLinkClient {
   methodDescriptorRequestCoreInfo = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/RequestCoreInfo',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.Empty,
-    colink$server$dev_proto_colink_pb.CoreInfo,
-    (request: colink$server$dev_proto_colink_pb.Empty) => {
+    proto_colink_pb.Empty,
+    proto_colink_pb.CoreInfo,
+    (request: proto_colink_pb.Empty) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.CoreInfo.deserializeBinary
+    proto_colink_pb.CoreInfo.deserializeBinary
   );
 
   requestCoreInfo(
-    request: colink$server$dev_proto_colink_pb.Empty,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.CoreInfo>;
+    request: proto_colink_pb.Empty,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.CoreInfo>;
 
   requestCoreInfo(
-    request: colink$server$dev_proto_colink_pb.Empty,
+    request: proto_colink_pb.Empty,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.CoreInfo) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.CoreInfo>;
+               response: proto_colink_pb.CoreInfo) => void): grpcWeb.ClientReadableStream<proto_colink_pb.CoreInfo>;
 
   requestCoreInfo(
-    request: colink$server$dev_proto_colink_pb.Empty,
+    request: proto_colink_pb.Empty,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.CoreInfo) => void) {
+               response: proto_colink_pb.CoreInfo) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -511,29 +511,29 @@ export class CoLinkClient {
   methodDescriptorSubscribe = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/Subscribe',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.SubscribeRequest,
-    colink$server$dev_proto_colink_pb.MQQueueName,
-    (request: colink$server$dev_proto_colink_pb.SubscribeRequest) => {
+    proto_colink_pb.SubscribeRequest,
+    proto_colink_pb.MQQueueName,
+    (request: proto_colink_pb.SubscribeRequest) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.MQQueueName.deserializeBinary
+    proto_colink_pb.MQQueueName.deserializeBinary
   );
 
   subscribe(
-    request: colink$server$dev_proto_colink_pb.SubscribeRequest,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.MQQueueName>;
+    request: proto_colink_pb.SubscribeRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.MQQueueName>;
 
   subscribe(
-    request: colink$server$dev_proto_colink_pb.SubscribeRequest,
+    request: proto_colink_pb.SubscribeRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.MQQueueName) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.MQQueueName>;
+               response: proto_colink_pb.MQQueueName) => void): grpcWeb.ClientReadableStream<proto_colink_pb.MQQueueName>;
 
   subscribe(
-    request: colink$server$dev_proto_colink_pb.SubscribeRequest,
+    request: proto_colink_pb.SubscribeRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.MQQueueName) => void) {
+               response: proto_colink_pb.MQQueueName) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -554,29 +554,29 @@ export class CoLinkClient {
   methodDescriptorUnsubscribe = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/Unsubscribe',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.MQQueueName,
-    colink$server$dev_proto_colink_pb.Empty,
-    (request: colink$server$dev_proto_colink_pb.MQQueueName) => {
+    proto_colink_pb.MQQueueName,
+    proto_colink_pb.Empty,
+    (request: proto_colink_pb.MQQueueName) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.Empty.deserializeBinary
+    proto_colink_pb.Empty.deserializeBinary
   );
 
   unsubscribe(
-    request: colink$server$dev_proto_colink_pb.MQQueueName,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.Empty>;
+    request: proto_colink_pb.MQQueueName,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.Empty>;
 
   unsubscribe(
-    request: colink$server$dev_proto_colink_pb.MQQueueName,
+    request: proto_colink_pb.MQQueueName,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.Empty>;
+               response: proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<proto_colink_pb.Empty>;
 
   unsubscribe(
-    request: colink$server$dev_proto_colink_pb.MQQueueName,
+    request: proto_colink_pb.MQQueueName,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Empty) => void) {
+               response: proto_colink_pb.Empty) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -594,32 +594,118 @@ export class CoLinkClient {
     this.methodDescriptorUnsubscribe);
   }
 
+  methodDescriptorStartProtocolOperator = new grpcWeb.MethodDescriptor(
+    '/colink.CoLink/StartProtocolOperator',
+    grpcWeb.MethodType.UNARY,
+    proto_colink_pb.ProtocolOperatorInstance,
+    proto_colink_pb.ProtocolOperatorInstance,
+    (request: proto_colink_pb.ProtocolOperatorInstance) => {
+      return request.serializeBinary();
+    },
+    proto_colink_pb.ProtocolOperatorInstance.deserializeBinary
+  );
+
+  startProtocolOperator(
+    request: proto_colink_pb.ProtocolOperatorInstance,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.ProtocolOperatorInstance>;
+
+  startProtocolOperator(
+    request: proto_colink_pb.ProtocolOperatorInstance,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: proto_colink_pb.ProtocolOperatorInstance) => void): grpcWeb.ClientReadableStream<proto_colink_pb.ProtocolOperatorInstance>;
+
+  startProtocolOperator(
+    request: proto_colink_pb.ProtocolOperatorInstance,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: proto_colink_pb.ProtocolOperatorInstance) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/colink.CoLink/StartProtocolOperator',
+        request,
+        metadata || {},
+        this.methodDescriptorStartProtocolOperator,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/colink.CoLink/StartProtocolOperator',
+    request,
+    metadata || {},
+    this.methodDescriptorStartProtocolOperator);
+  }
+
+  methodDescriptorStopProtocolOperator = new grpcWeb.MethodDescriptor(
+    '/colink.CoLink/StopProtocolOperator',
+    grpcWeb.MethodType.UNARY,
+    proto_colink_pb.ProtocolOperatorInstance,
+    proto_colink_pb.Empty,
+    (request: proto_colink_pb.ProtocolOperatorInstance) => {
+      return request.serializeBinary();
+    },
+    proto_colink_pb.Empty.deserializeBinary
+  );
+
+  stopProtocolOperator(
+    request: proto_colink_pb.ProtocolOperatorInstance,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.Empty>;
+
+  stopProtocolOperator(
+    request: proto_colink_pb.ProtocolOperatorInstance,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<proto_colink_pb.Empty>;
+
+  stopProtocolOperator(
+    request: proto_colink_pb.ProtocolOperatorInstance,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: proto_colink_pb.Empty) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/colink.CoLink/StopProtocolOperator',
+        request,
+        metadata || {},
+        this.methodDescriptorStopProtocolOperator,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/colink.CoLink/StopProtocolOperator',
+    request,
+    metadata || {},
+    this.methodDescriptorStopProtocolOperator);
+  }
+
   methodDescriptorInterCoreSyncTask = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/InterCoreSyncTask',
     grpcWeb.MethodType.UNARY,
-    colink$server$dev_proto_colink_pb.Task,
-    colink$server$dev_proto_colink_pb.Empty,
-    (request: colink$server$dev_proto_colink_pb.Task) => {
+    proto_colink_pb.Task,
+    proto_colink_pb.Empty,
+    (request: proto_colink_pb.Task) => {
       return request.serializeBinary();
     },
-    colink$server$dev_proto_colink_pb.Empty.deserializeBinary
+    proto_colink_pb.Empty.deserializeBinary
   );
 
   interCoreSyncTask(
-    request: colink$server$dev_proto_colink_pb.Task,
-    metadata: grpcWeb.Metadata | null): Promise<colink$server$dev_proto_colink_pb.Empty>;
+    request: proto_colink_pb.Task,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.Empty>;
 
   interCoreSyncTask(
-    request: colink$server$dev_proto_colink_pb.Task,
+    request: proto_colink_pb.Task,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<colink$server$dev_proto_colink_pb.Empty>;
+               response: proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<proto_colink_pb.Empty>;
 
   interCoreSyncTask(
-    request: colink$server$dev_proto_colink_pb.Task,
+    request: proto_colink_pb.Task,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: colink$server$dev_proto_colink_pb.Empty) => void) {
+               response: proto_colink_pb.Empty) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +

@@ -1,4 +1,4 @@
-// source: colink-server-dev/proto/colink_remote_storage.proto
+// source: proto/colink_remote_storage.proto
 /**
  * @fileoverview
  * @enhanceable

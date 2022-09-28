@@ -1,4 +1,4 @@
-// source: colink-server-dev/proto/colink_policy_module.proto
+// source: proto/colink_policy_module.proto
 /**
  * @fileoverview
  * @enhanceable

@@ -1,4 +1,4 @@
-// source: colink-server-dev/proto/colink_registry.proto
+// source: proto/colink_registry.proto
 /**
  * @fileoverview
  * @enhanceable
