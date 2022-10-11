@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CoLinkClient } from '../proto_js/ColinkServiceClientPb';
+import { NavbarComp } from './components/NavbarComp/NavbarComp'
 import { UserPanel } from './components/User/UserPanel'
 import { StoragePanel } from './components/Storage/StoragePanel'
 import { Computation } from './components/Computation/Computation'
@@ -19,16 +20,19 @@ function App(): JSX.Element {
   }, [clientHostname]);
 
   return (
-    <div className={styles.App}>
-      <h1>CoLearn Client</h1>
-      <DebugPanel clientHostname={clientHostname} setHostname={setClientHostname} 
-        hostToken={hostToken} setToken={setHostToken} jwt={clientJwt}></DebugPanel>
-      <UserPanel client={client} hostToken={hostToken} jwt={clientJwt} setJwt={setClientJwt}></UserPanel>
-      <StoragePanel client={client} hostToken={hostToken} jwt={clientJwt}></StoragePanel>
-      
-      {/* Computation to be completed in fall semester */}
-      {/* <Computation hostToken={hostToken} jwt={clientJwt}></Computation> */}
-    </div>
+    <>
+      <NavbarComp clientHostname={clientHostname} hostToken={hostToken} jwt={clientJwt}></NavbarComp>
+      <div className={styles.App}>
+        <h1>CoLearn Client</h1>
+        <DebugPanel clientHostname={clientHostname} setHostname={setClientHostname} 
+          hostToken={hostToken} setToken={setHostToken} jwt={clientJwt}></DebugPanel>
+        <UserPanel client={client} hostToken={hostToken} jwt={clientJwt} setJwt={setClientJwt}></UserPanel>
+        <StoragePanel client={client} hostToken={hostToken} jwt={clientJwt}></StoragePanel>
+        
+        {/* Computation to be completed in fall semester */}
+        {/* <Computation hostToken={hostToken} jwt={clientJwt}></Computation> */}
+      </div>
+    </>
   );
 }
 

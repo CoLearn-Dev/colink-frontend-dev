@@ -30,7 +30,7 @@ export const DebugPanel: React.FC<Props> = (props) => {
                     <div className={styles.statusField}>
                         <div>
                             <h3>Client Hostname:</h3>
-                            <input type="text" value={locHostname} onChange={(e) => { updateLocHostname(e.target.value); }}></input><br />
+                            <input type="text" value={locHostname} onChange={(e) => { updateLocHostname(e.target.value); }}></input><br /><br />
                             <h3>Host Token:</h3>
                             <input type="file" key={fileInputField || ''} onChange={(e) => {readFromFile(e, updateLocHostToken);}} /><br /><br />
                             <button onClick={()=>{

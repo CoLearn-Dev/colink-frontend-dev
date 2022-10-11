@@ -39,6 +39,8 @@ Typescript/Javascript definitions of protocol buffers are located in `/proto_js`
 Instructions to update `/proto` definitions:
 * Execute `./scripts/proto_gen.sh` in the `colink-frontend-dev` folder
 
+NOTE: Please use a `libprotoc` version of 3.20.* or lower, 3.21+ is currently broken 
+
 ### Running the Application Locally (Setup Script)
 This is a 2 step process:
 * Start the DDS server core:

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp } from '../../lib';
+import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp, generateJwtFromKeyMM } from '../../lib';
 import { readFromFile, createDownloadHref } from '../../utils';
 import { ethers } from 'ethers';
 import styles from './UserPanel.module.css'
@@ -40,39 +40,41 @@ async function getUserData(method: Function, callbacks: [Function | null, Functi
         });
 }
 
-async function signMessage() {
-    let message = "test"
-    try {
-        // Connect to metamask wallet
-        if (!window.ethereum)
-          throw new Error("No crypto wallet found. Please install it.");
+async function signMessage(address: string | CoLinkClient, hostToken: string) {
+    // let message = "test"
+    // try {
+    //     // Connect to metamask wallet
+    //     if (!window.ethereum)
+    //       throw new Error("No crypto wallet found. Please install it.");
     
-        await window.ethereum.request({
-            method: "eth_requestAccounts"
-        });
+    //     await window.ethereum.request({
+    //         method: "eth_requestAccounts"
+    //     });
 
-        // Sign message
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const signature = await signer.signMessage(message);
-        const address = await signer.getAddress();
+    //     // Sign message
+    //     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //     const signer = provider.getSigner();
+    //     const signature = await signer.signMessage(message);
+    //     const address = await signer.getAddress();
 
-        console.log(signature);
+    //     console.log(signer.getAddress())
+    //     console.log(signature);
     
-        // Verify signature (recover signer address --> public key)
-        const signerAddress = await ethers.utils.verifyMessage(message, signature);
-        if (signerAddress !== address) {
-            alert("issue with signature")
-        } else {
-            console.log("signature matches")
-        }
+    //     // Verify signature (recover signer address --> public key)
+    //     const signerAddress = await ethers.utils.verifyMessage(message, signature);
+    //     if (signerAddress !== address) {
+    //         alert("issue with signature")
+    //     } else {
+    //         console.log("signature matches")
+    //     }
 
-        // Verifying in rust: https://stackoverflow.com/questions/67278243/how-to-verify-the-signature-made-by-metamask-for-ethereum
-        // More on EIP-712: https://eips.ethereum.org/EIPS/eip-712 
+    //     // Verifying in rust: https://stackoverflow.com/questions/67278243/how-to-verify-the-signature-made-by-metamask-for-ethereum
+    //     // More on EIP-712: https://eips.ethereum.org/EIPS/eip-712 
 
-      } catch (err) {
-        alert(err);
-      }
+    //   } catch (err) {
+    //     alert(err);
+    //   }
+    console.log(generateJwtFromKeyMM(address, hostToken))
 }
 
 export const UserPanel: React.FC<Props> = (props) => {
@@ -92,7 +94,7 @@ export const UserPanel: React.FC<Props> = (props) => {
     function loginPanel(): JSX.Element {
 
         return (
-            <div>
+            <div className={styles.UserPanel}>
                 <div className={styles.modalInner}>
                     <div className={styles.modalField}>
                         <h4>Use Pre-existing Private Key</h4>
@@ -112,14 +114,14 @@ export const UserPanel: React.FC<Props> = (props) => {
                     </div>
                 </div>
                 {/* TODO: Implement Metamask connect once backend is updated */}
-                {/* <div className={styles.modalInner}>
+                <div className={styles.modalInner}>
                     <div className={styles.modalField}></div>
                     <div className={styles.modalField}>
                         <h4>Metamask Login</h4>
-                        <button onClick={() => signMessage()}>Connect Wallet</button>
+                        <button onClick={() => signMessage(props.client, props.hostToken)}>Connect Wallet</button>
                     </div>
                     <div className={styles.modalField}></div>
-                </div> */}
+                </div>
             </div>
         )
     }
@@ -179,7 +181,7 @@ export const UserPanel: React.FC<Props> = (props) => {
     }
 
     return (
-        <div>
+        <div className={styles.UserPanel}>
             <h2>Login:</h2>
             <div className={styles.modal}>
                 {props.jwt == "" ? 
