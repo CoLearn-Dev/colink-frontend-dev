@@ -7,7 +7,7 @@ import { Computation } from './components/Computation/Computation'
 import { Settings } from './components/Settings/Settings'
 import styles from './App.module.css';
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 function App(): JSX.Element {
   // reference to DDSClient (note: http://localhost:8000 connects to envoy proxy)
