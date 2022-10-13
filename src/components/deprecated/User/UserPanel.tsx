@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp, generateJwtFromKeyMM } from '../../lib';
-import { readFromFile, createDownloadHref } from '../../utils';
+import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp, generateJwtFromKeyMM } from '../../../lib';
+import { readFromFile, createDownloadHref } from '../../../utils';
 import { ethers } from 'ethers';
 import styles from './UserPanel.module.css'
-import { CoLinkClient } from '../../../proto_js/ColinkServiceClientPb';
+import '../../global.css'
+import { CoLinkClient } from '../../../../proto_js/ColinkServiceClientPb';
 
 interface Props {
     client: CoLinkClient,
@@ -41,40 +42,40 @@ async function getUserData(method: Function, callbacks: [Function | null, Functi
 }
 
 async function signMessage(address: string | CoLinkClient, hostToken: string) {
-    // let message = "test"
-    // try {
-    //     // Connect to metamask wallet
-    //     if (!window.ethereum)
-    //       throw new Error("No crypto wallet found. Please install it.");
+    let message = "corepubkey:abcde\nexptimestamp:12345\n..."
+    try {
+        // Connect to metamask wallet
+        if (!window.ethereum)
+          throw new Error("No crypto wallet found. Please install it.");
     
-    //     await window.ethereum.request({
-    //         method: "eth_requestAccounts"
-    //     });
+        await window.ethereum.request({
+            method: "eth_requestAccounts"
+        });
 
-    //     // Sign message
-    //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //     const signer = provider.getSigner();
-    //     const signature = await signer.signMessage(message);
-    //     const address = await signer.getAddress();
+        // Sign message
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const signature = await signer.signMessage(message);
+        const address = await signer.getAddress();
 
-    //     console.log(signer.getAddress())
-    //     console.log(signature);
+        console.log(signer.getAddress())
+        console.log(signature);
     
-    //     // Verify signature (recover signer address --> public key)
-    //     const signerAddress = await ethers.utils.verifyMessage(message, signature);
-    //     if (signerAddress !== address) {
-    //         alert("issue with signature")
-    //     } else {
-    //         console.log("signature matches")
-    //     }
+        // Verify signature (recover signer address --> public key)
+        const signerAddress = await ethers.utils.verifyMessage(message, signature);
+        if (signerAddress !== address) {
+            alert("issue with signature")
+        } else {
+            console.log("signature matches")
+        }
 
-    //     // Verifying in rust: https://stackoverflow.com/questions/67278243/how-to-verify-the-signature-made-by-metamask-for-ethereum
-    //     // More on EIP-712: https://eips.ethereum.org/EIPS/eip-712 
+        // Verifying in rust: https://stackoverflow.com/questions/67278243/how-to-verify-the-signature-made-by-metamask-for-ethereum
+        // More on EIP-712: https://eips.ethereum.org/EIPS/eip-712 
 
-    //   } catch (err) {
-    //     alert(err);
-    //   }
-    console.log(generateJwtFromKeyMM(address, hostToken))
+      } catch (err) {
+        alert(err);
+      }
+    // console.log(generateJwtFromKeyMM(address, hostToken))
 }
 
 export const UserPanel: React.FC<Props> = (props) => {

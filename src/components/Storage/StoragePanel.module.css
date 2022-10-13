@@ -1,10 +1,14 @@
+.Storage {
+    margin-top: 50px;
+}
+
 .modal {
     position: relative;
     margin: 0 auto;
    
     padding: 10px;
     max-width: 1000px;
-    height: 375px;
+    height: 500px;
     
     background-color: #FAFAFA;
     border-radius: 18px;
@@ -75,13 +79,11 @@
 
     border: 1px solid black;
     text-align: left;
-    
-    /* padding-left: 5px; */
-}
+    }
 
 .innerDisplay {
     width: 95%;
-    height: 66%;
+    height: 80%;
     padding: 15px;
     
     background-color: #DDDDDD;
@@ -99,7 +101,13 @@
     margin-top: 100px;
 }
 
-textarea {
+.modalField > textarea, .modalInners > textarea {
     resize: none;
-    height: 50px;
+    width: 200px;
+    height: 75px;
+}
+
+.modalField > input[type="text"] {
+    margin: 0 auto;
+    width: 175px;
 }

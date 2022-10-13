@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { CoLinkClient } from '../proto_js/ColinkServiceClientPb';
-import { NavbarComp } from './components/NavbarComp/NavbarComp'
-import { UserPanel } from './components/User/UserPanel'
+import { Layout } from './components/Layout/Layout'
+import { ServerConfig } from './components/ServerConfig/ServerConfig'
 import { StoragePanel } from './components/Storage/StoragePanel'
 import { Computation } from './components/Computation/Computation'
+import { Settings } from './components/Settings/Settings'
 import styles from './App.module.css';
-import { DebugPanel } from './components/Debug/DebugPanel';
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 function App(): JSX.Element {
   // reference to DDSClient (note: http://localhost:8000 connects to envoy proxy)
@@ -19,19 +21,29 @@ function App(): JSX.Element {
     setClient(new CoLinkClient(clientHostname));
   }, [clientHostname]);
 
+  function clientInitialized(): boolean {
+    return clientHostname !== "" && hostToken !== "";
+  }
+
   return (
     <>
-      <NavbarComp clientHostname={clientHostname} hostToken={hostToken} jwt={clientJwt}></NavbarComp>
-      <div className={styles.App}>
-        <h1>CoLearn Client</h1>
-        <DebugPanel clientHostname={clientHostname} setHostname={setClientHostname} 
-          hostToken={hostToken} setToken={setHostToken} jwt={clientJwt}></DebugPanel>
-        <UserPanel client={client} hostToken={hostToken} jwt={clientJwt} setJwt={setClientJwt}></UserPanel>
-        <StoragePanel client={client} hostToken={hostToken} jwt={clientJwt}></StoragePanel>
-        
-        {/* Computation to be completed in fall semester */}
-        {/* <Computation hostToken={hostToken} jwt={clientJwt}></Computation> */}
-      </div>
+      <Router>
+        <Routes>
+          <Route path="/" element={
+            <Layout />
+          }>
+            <Route index element={
+              <>{clientInitialized() ? 
+                <Navigate to="/settings" /> : 
+                <ServerConfig clientHostname={clientHostname} setHostname={setClientHostname} hostToken={hostToken} setToken={setHostToken} />}
+              </>
+            } />
+            <Route path="settings" element={<Settings client={client} hostToken={hostToken} jwt={clientJwt} setJwt={setClientJwt} />}></Route>
+            <Route path="storage" element={<StoragePanel client={client} hostToken={hostToken} jwt={clientJwt} />}></Route>
+            <Route path="computation" element={<></>}></Route>
+          </Route>
+        </Routes>
+      </Router>
     </>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { readFromFile } from '../../utils'
+import { readFromFile } from '../../../utils'
 import styles from './DebugPanel.module.css'
+import '../../global.css'
 
 interface Props {
     clientHostname: string,
@@ -17,7 +18,7 @@ export const DebugPanel: React.FC<Props> = (props) => {
     
 
     return (
-        <div>
+        <div className={styles.Debug}>
             <h2>Debug Panel:</h2>
             <div className={styles.statusPanel}>
                 <div className={styles.statusInner}>

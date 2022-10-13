@@ -4,6 +4,7 @@ import { keyNameFromPath, storageEntryToJSON } from '../../lib';
 import { StorageEntry } from '../../../proto_js/colink_pb';
 import { createDownloadHref } from '../../utils';
 import styles from './StoragePanel.module.css'
+import '../../global.css'
 import { CoLinkClient } from '../../../proto_js/ColinkServiceClientPb';
 
 interface Props {
@@ -48,7 +49,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
     }, [props.jwt]);
 
     if (props.jwt == "") {
-        return (<div></div>)
+        return (<div className={styles.Storage}>JWT is not initialized</div>)
     }
 
 
@@ -197,14 +198,13 @@ export const StoragePanel: React.FC<Props> = (props) => {
     }
 
     return (
-        <div>
-            <h2>Storage:</h2>
+        <div className={styles.Storage}>
             <div className={styles.modal}>
                 <div className={styles.modalInner}>
                     {createEntryPanel()}
                     <div className={styles.modalField}>
                         {createEntryList()}
-                        <div style={{ position: "absolute", bottom: "20px" }}>
+                        <div className={styles.modalInners} style={{ position: "absolute", bottom: "20px" }}>
                             <textarea value={upPayload} onChange={(e) => { updateNewPayload(e.target.value); }}></textarea><br /><br />
                             <div className={styles.buttonGroup}>
                                 {updateEntryButton()}
