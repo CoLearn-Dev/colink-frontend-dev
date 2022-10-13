@@ -21,3 +21,7 @@ export function createDownloadHref(contents: string): string {
     
     return dataLink;
 }
+
+export function copyText(text: string): void {
+    navigator.clipboard.writeText(text);
+}

@@ -7,6 +7,8 @@ import styles from './StoragePanel.module.css'
 import '../../global.css'
 import { CoLinkClient } from '../../../proto_js/ColinkServiceClientPb';
 
+import Container from 'react-bootstrap/Container';
+
 interface Props {
     client: CoLinkClient,
     hostToken: string,
@@ -49,7 +51,11 @@ export const StoragePanel: React.FC<Props> = (props) => {
     }, [props.jwt]);
 
     if (props.jwt == "") {
-        return (<div className={styles.Storage}>JWT is not initialized</div>)
+        return (
+            <Container>
+                <div className={styles.Storage}>JWT is not initialized</div>
+            </Container>
+        )
     }
 
 
@@ -198,25 +204,27 @@ export const StoragePanel: React.FC<Props> = (props) => {
     }
 
     return (
-        <div className={styles.Storage}>
-            <div className={styles.modal}>
-                <div className={styles.modalInner}>
-                    {createEntryPanel()}
-                    <div className={styles.modalField}>
-                        {createEntryList()}
-                        <div className={styles.modalInners} style={{ position: "absolute", bottom: "20px" }}>
-                            <textarea value={upPayload} onChange={(e) => { updateNewPayload(e.target.value); }}></textarea><br /><br />
-                            <div className={styles.buttonGroup}>
-                                {updateEntryButton()}
-                                {deleteEntryButton()}
+        <Container>
+            <div className={styles.Storage}>
+                <div className={styles.modal}>
+                    <div className={styles.modalInner}>
+                        {createEntryPanel()}
+                        <div className={styles.modalField}>
+                            {createEntryList()}
+                            <div className={styles.modalInners} style={{ position: "absolute", bottom: "20px" }}>
+                                <textarea value={upPayload} onChange={(e) => { updateNewPayload(e.target.value); }}></textarea><br /><br />
+                                <div className={styles.buttonGroup}>
+                                    {updateEntryButton()}
+                                    {deleteEntryButton()}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className={styles.modalField}>
-                        {downloadEntryPanel()}
+                        <div className={styles.modalField}>
+                            {downloadEntryPanel()}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Container>
     )
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp } from '../../lib';
-import { readFromFile, createDownloadHref } from '../../utils';
+import { readFromFile, createDownloadHref, copyText } from '../../utils';
 import { ethers } from 'ethers';
 import styles from './Settings.module.css'
 import '../../global.css'
@@ -118,6 +118,7 @@ export const Settings: React.FC<Props> = (props) => {
                                     </button>
                                     <button><a download="host_token.txt"
                                         href={createDownloadHref(props.hostToken)}>Download</a></button>
+                                    <button onClick={() => copyText(props.hostToken)}>Copy to Clipboard</button>
                                     <Collapse in={displayHost}>
                                         <div className={styles.collapse}>
                                             {props.hostToken}
@@ -152,6 +153,7 @@ export const Settings: React.FC<Props> = (props) => {
                                         </button>
                                         <button><a download="user_jwt.txt"
                                             href={createDownloadHref(props.jwt)}>Download</a></button>
+                                        <button onClick={() => copyText(props.jwt)}>Copy to Clipboard</button>
                                         <Collapse in={displayJwt}>
                                             <div className={styles.collapse}>
                                                 {props.jwt}
@@ -171,7 +173,8 @@ export const Settings: React.FC<Props> = (props) => {
                                     Display
                                 </button>
                                 <button><a download="private_key.txt"
-                                    href={createDownloadHref(props.jwt)}>Download</a></button>
+                                    href={createDownloadHref(privateKey)}>Download</a></button>
+                                <button onClick={() => copyText(privateKey)}>Copy to Clipboard</button>
                                 <Collapse in={displayPk}>
                                     <div className={styles.collapse}>
                                         {privateKey}
