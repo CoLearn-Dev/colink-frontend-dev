@@ -31,6 +31,12 @@
   border-bottom: 2px solid #cfcece;
 }
 
+.panelSelect {
+  padding: 10px 0;
+  background-color: white;
+  border-bottom: 2px solid #cfcece;
+}
+
 .panelMid {
   padding: 20px;
   background-color: #FAFAFA;
@@ -43,28 +49,42 @@
   padding: 15px;
 }
 
-h3 {
+.panelMid > h3 {
   display: inline-block;
 }
 
-input[type='text'] {
+.panelMid > input[type='text'] {
   margin-left: 10px;
+  margin-bottom: 25px;
   width: 300px;
 }
 
-input[type='file'] {
+.panelMid > input[type='file'] {
   color: transparent;
 }
 
 input[type='button'] {
   display: inline-block;
+  margin: 0px 10px;
 }
 
-textarea {
+.panelMid input[type='button'] {
+  margin-bottom: 25px;
+}
+
+.panelMid > textarea {
   width: 400px;
   height: 150px;
   resize: none;
+  margin-top: -15px;
 }
+
+.footer {
+  padding-bottom: 10px;
+  text-align: center;
+  font-size: 13px;
+}
+
 
 
 

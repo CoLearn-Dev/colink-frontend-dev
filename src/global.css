@@ -27,10 +27,16 @@ h4 {
 }
 
 a {
-    color: black;
+    color: blue;
+    transition: color 2s ease;
 }
 
-a:link { text-decoration: none; }
-a:visited { text-decoration: none; }
-a:hover { text-decoration: none; color: black; }
-a:active { text-decoration: none; }
+a:hover {
+    color: darkblue;
+}
+
+button > a { color: black }
+button > a:link { text-decoration: none; }
+button > a:visited { text-decoration: none; }
+button > a:hover { text-decoration: none; color: black; }
+button > a:active { text-decoration: none; }

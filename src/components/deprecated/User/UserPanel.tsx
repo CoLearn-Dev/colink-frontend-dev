@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp, generateJwtFromKeyMM } from '../../../lib';
 import { readFromFile, createDownloadHref } from '../../../utils';
 import { ethers } from 'ethers';
-import styles from './UserPanel.module.css'
-import '../../global.css'
+import styles from './UserPanel.module.css';
+import '../../global.css';
 import { CoLinkClient } from '../../../../proto_js/ColinkServiceClientPb';
 
 interface Props {

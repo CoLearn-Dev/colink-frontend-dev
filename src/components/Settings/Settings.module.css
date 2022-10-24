@@ -32,13 +32,14 @@ h2, h3 {
 
 .settingsOptions > input[type='text'] {
     width: 100px;
+    margin: 0 5px;
 }
 
 .settingsOptions > span {
     margin: 0 5px;
 }
 
-button {
+.settingsOptions > button {
     margin: 5px;
     font-size: 13px;
 }
@@ -49,11 +50,12 @@ button {
     text-align: left;
 }
 
-textarea {
+.modalField > textarea, .modal > textarea {
     display: inline-block;
     width: 400px;
     height: 150px;
     resize: none;
+    margin: 10px 0;
 }
 
 .modal {
@@ -69,6 +71,11 @@ textarea {
     border: 1px solid #cfcece;
 
     text-align: center;
+}
+
+.modal > button, .modalField > button {
+    margin: 5px;
+    font-size: 15px;
 }
 
 .modalInner {

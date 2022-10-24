@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { UserData, generateKeyAndJwt, generateJwtFromKey, generateToken, daysToTimestamp } from '../../lib';
 import { readFromFile, createDownloadHref, copyText } from '../../utils';
 import { ethers } from 'ethers';
-import styles from './Settings.module.css'
-import '../../global.css'
+import styles from './Settings.module.css';
+import '../../global.css';
 import { CoLinkClient } from '../../../proto_js/ColinkServiceClientPb';
+import { Navigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Collapse from 'react-bootstrap/Collapse';
 
 interface Props {
     client: CoLinkClient,
+    setClient: Function,
     hostToken: string,
+    setHostToken: Function,
     jwt: string,
     setJwt: Function,
+    isAdmin: boolean
 }
 
 declare let window: any;
@@ -88,9 +92,8 @@ export const Settings: React.FC<Props> = (props) => {
     const [displayPk, togglePk] = useState(false);
 
     const [displayGen, toggleGen] = useState(false);
-    const [displayLogin, toggleLogin] = useState(false);
 
-    const [tempJwt, updateTempJwt] = useState("");
+    const [triggerLogout, updateLogoutTrigger] = useState(false);
 
     function getServerStatus(): JSX.Element {
         return (
@@ -105,27 +108,36 @@ export const Settings: React.FC<Props> = (props) => {
                                 <span>{props.client.hostname_}</span> :
                                 <span>Not Configured</span>
                             }<br />
-                        <h3>Host Token:</h3>
-                            {props.hostToken != "" ? 
-                                <>
-                                    <span>Set</span>
-                                    <button
-                                        onClick={() => toggleHost(!displayHost)}
-                                        aria-controls="collapse"
-                                        aria-expanded={displayHost}
-                                    >
-                                        Display
-                                    </button>
-                                    <button><a download="host_token.txt"
-                                        href={createDownloadHref(props.hostToken)}>Download</a></button>
-                                    <button onClick={() => copyText(props.hostToken)}>Copy to Clipboard</button>
-                                    <Collapse in={displayHost}>
-                                        <div className={styles.collapse}>
-                                            {props.hostToken}
-                                        </div>
-                                    </Collapse>
-                                </> 
-                                : <span>Not Configured</span>}<br />
+
+                        {props.isAdmin ? 
+                            <>
+                                <h3>Host Token:</h3>
+                                {props.hostToken != "" ? 
+                                    <>
+                                        <span>Set</span>
+                                        <button
+                                            onClick={() => toggleHost(!displayHost)}
+                                            aria-controls="collapse"
+                                            aria-expanded={displayHost}
+                                        >
+                                            Display
+                                        </button>
+                                        <button><a download="host_token.txt"
+                                            href={createDownloadHref(props.hostToken)}>Download</a></button>
+                                        <button onClick={() => copyText(props.hostToken)}>Copy to Clipboard</button>
+                                        <Collapse in={displayHost}>
+                                            <div className={styles.collapse}>
+                                                {props.hostToken}
+                                            </div>
+                                        </Collapse><br />
+                                        <button onClick={logout}>Logout</button>
+                                    </> 
+                                    : <span>Not Configured</span>}<br />
+                            </>
+                            : <></>}
+                        
+                        
+                        
                     </div>
                 </div>
             </>
@@ -137,53 +149,36 @@ export const Settings: React.FC<Props> = (props) => {
             <>
                 <div className={styles.settingsPanel}>
                     <div className={styles.settingsHeader}>
-                        <h1>User Login</h1>
+                        <h1>User Actions</h1>
                     </div>
                     <div className={styles.settingsOptions}>
-                        <h3>User JWT:</h3>
-                                {props.jwt != "" ? 
-                                    <>
-                                        <span>Set</span>
-                                        <button
-                                            onClick={() => toggleJwt(!displayJwt)}
-                                            aria-controls="collapse"
-                                            aria-expanded={displayJwt}
-                                        >
-                                            Display
-                                        </button>
-                                        <button><a download="user_jwt.txt"
-                                            href={createDownloadHref(props.jwt)}>Download</a></button>
-                                        <button onClick={() => copyText(props.jwt)}>Copy to Clipboard</button>
-                                        <Collapse in={displayJwt}>
-                                            <div className={styles.collapse}>
-                                                {props.jwt}
-                                            </div>
-                                        </Collapse>
-                                    </> 
-                                    : <span>Not Logged In<hr /></span>}<br />
-                        {privateKey != "" ?
+                        { !props.isAdmin ? 
                             <>
-                                <h3>Private Key:</h3>
-                                <span>Set</span>
-                                <button
-                                    onClick={() => togglePk(!displayPk)}
-                                    aria-controls="collapse"
-                                    aria-expanded={displayPk}
-                                >
-                                    Display
-                                </button>
-                                <button><a download="private_key.txt"
-                                    href={createDownloadHref(privateKey)}>Download</a></button>
-                                <button onClick={() => copyText(privateKey)}>Copy to Clipboard</button>
-                                <Collapse in={displayPk}>
-                                    <div className={styles.collapse}>
-                                        {privateKey}
-                                    </div>
-                                </Collapse><br />
-                            </>
-                            : <></>}
+                                <h3>User JWT:</h3>
+                                    {props.jwt != "" ? 
+                                        <>
+                                            <span>Set</span>
+                                            <button
+                                                onClick={() => toggleJwt(!displayJwt)}
+                                                aria-controls="collapse"
+                                                aria-expanded={displayJwt}
+                                            >
+                                                Display
+                                            </button>
+                                            <button><a download="user_jwt.txt"
+                                                href={createDownloadHref(props.jwt)}>Download</a></button>
+                                            <button onClick={() => copyText(props.jwt)}>Copy to Clipboard</button>
+                                            <Collapse in={displayJwt}>
+                                                <div className={styles.collapse}>
+                                                    {props.jwt}
+                                                </div>
+                                            </Collapse><br />
+                                            <button onClick={logout}>Logout</button>
+                                        </> 
+                                        : <span>Not Logged In</span>}<br />
+                            </> : <></>}
 
-                        {props.jwt === "" ?
+                        {props.isAdmin ?
                             <>
                                 <h3>Create a New JWT:</h3>
                                 <button
@@ -195,40 +190,53 @@ export const Settings: React.FC<Props> = (props) => {
                                 </button>
                                 <Collapse in={displayGen}>
                                     <div>
-                                        {loginPanel()}
+                                        {generateJWTPanel()}
                                     </div>
-                                </Collapse><br />
-
-                                <h3>Login with Pre-existing JWT:</h3>
-                                <button
-                                    onClick={() => toggleLogin(!displayLogin)}
-                                    aria-controls="collapse"
-                                    aria-expanded={displayLogin}
-                                >
-                                    Toggle
-                                </button>
-                                <Collapse in={displayLogin}>
-                                    <div>
-                                        <div className={styles.modal}>
-                                            <h3>Use Pre-existing JWT:</h3><br />
-                                            <input type="file" id="selectExistingJWT" style={{display: "none"}}  onChange={(e) => { readFromFile(e, updateTempJwt) }} />
-                                            <button onClick={() => {
-                                                let element = document.getElementById('selectExistingJWT');
-                                                if (element !== null) {
-                                                    element.click();
-                                                }
-                                            }}>Import JWT From File</button><br />
-                                            <textarea value={tempJwt} onChange={(e) => { updateTempJwt(e.target.value); }} /><br />
-                                            <button onClick={() => {props.setJwt(tempJwt)}}>Login</button>
-                                            <br />
-                                        </div>
-                                    </div>
-                                </Collapse><br />
-
-                                <h3>Metamask Login:</h3>
-                                <button onClick={() => signMessage(props.client, props.hostToken)}>Connect Wallet</button>
+                                </Collapse><hr />
+                                <h3>Generated JWT:</h3>
+                                    {props.jwt != "" ? 
+                                        <>
+                                            <span>Set</span>
+                                            <button
+                                                onClick={() => toggleJwt(!displayJwt)}
+                                                aria-controls="collapse"
+                                                aria-expanded={displayJwt}
+                                            >
+                                                Display
+                                            </button>
+                                            <button><a download="user_jwt.txt"
+                                                href={createDownloadHref(props.jwt)}>Download</a></button>
+                                            <button onClick={() => copyText(props.jwt)}>Copy to Clipboard</button>
+                                            <Collapse in={displayJwt}>
+                                                <div className={styles.collapse}>
+                                                    {props.jwt}
+                                                </div>
+                                            </Collapse><br />
+                                        </> 
+                                        : <span>None generated</span>}
+                                {privateKey != "" ?
+                                    <>
+                                        <h3>Private Key:</h3>
+                                        <span>Set</span>
+                                        <button
+                                            onClick={() => togglePk(!displayPk)}
+                                            aria-controls="collapse"
+                                            aria-expanded={displayPk}
+                                        >
+                                            Display
+                                        </button>
+                                        <button><a download="private_key.txt"
+                                            href={createDownloadHref(privateKey)}>Download</a></button>
+                                        <button onClick={() => copyText(privateKey)}>Copy to Clipboard</button>
+                                        <Collapse in={displayPk}>
+                                            <div className={styles.collapse}>
+                                                {privateKey}
+                                            </div>
+                                        </Collapse>
+                                    </>
+                            : <></>}
                             </> 
-                            : <button onClick={() => logout()}>Logout</button>
+                            : <></>
                         }
                     </div>
                 </div>
@@ -236,8 +244,7 @@ export const Settings: React.FC<Props> = (props) => {
         )
     }
 
-
-    function loginPanel(): JSX.Element {
+    function generateJWTPanel(): JSX.Element {
         
         return (
             <div className={styles.modal}>
@@ -302,13 +309,22 @@ export const Settings: React.FC<Props> = (props) => {
     function logout(): void {
         updateKey("");
         updateGuestJwt("");
+        
+        props.setClient("");
         props.setJwt("");
+        props.setHostToken("");
 
         toggleHost(false);
         toggleJwt(false);
         togglePk(false);
         toggleGen(false);
-        toggleLogin(false);
+
+        updateLogoutTrigger(true);
+        setTimeout(() => 
+        {
+            updateLogoutTrigger(false);
+        },
+        100);
     }
 
     return (
@@ -317,7 +333,8 @@ export const Settings: React.FC<Props> = (props) => {
                 <h1>Settings</h1>
                 {getServerStatus()}
                 {getLoginConfig()}
-                {userActions()}
+                {!props.isAdmin ? userActions() : <></>}
+                { triggerLogout ? <Navigate to="/" /> : <></> }
             </div>
         </Container>
         

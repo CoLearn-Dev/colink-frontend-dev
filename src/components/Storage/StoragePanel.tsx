@@ -3,8 +3,8 @@ import { createEntry, readEntry, updateEntry, deleteEntry, getUserStorageEntries
 import { keyNameFromPath, storageEntryToJSON } from '../../lib';
 import { StorageEntry } from '../../../proto_js/colink_pb';
 import { createDownloadHref } from '../../utils';
-import styles from './StoragePanel.module.css'
-import '../../global.css'
+import styles from './StoragePanel.module.css';
+import '../../global.css';
 import { CoLinkClient } from '../../../proto_js/ColinkServiceClientPb';
 
 import Container from 'react-bootstrap/Container';
@@ -57,7 +57,6 @@ export const StoragePanel: React.FC<Props> = (props) => {
             </Container>
         )
     }
-
 
     function createEntryPanel(): JSX.Element {
         return (

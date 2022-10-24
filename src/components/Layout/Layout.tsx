@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import styles from './Layout.module.css'
-import '../../global.css'
+import styles from './Layout.module.css';
+import '../../global.css';
 
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
