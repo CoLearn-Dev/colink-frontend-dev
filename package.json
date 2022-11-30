@@ -7,7 +7,7 @@
   "scripts": {
     "start": "webpack serve --port 3000 --open",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "echo 'colink.run' > ./build/CNAME && gh-pages -d build",
     "build": "NODE_ENV=production webpack"
   },
   "keywords": [],
