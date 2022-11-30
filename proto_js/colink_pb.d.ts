@@ -16,6 +16,106 @@ export namespace Empty {
   }
 }
 
+export class ListOfString extends jspb.Message {
+  getListList(): Array<string>;
+  setListList(value: Array<string>): ListOfString;
+  clearListList(): ListOfString;
+  addList(value: string, index?: number): ListOfString;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListOfString.AsObject;
+  static toObject(includeInstance: boolean, msg: ListOfString): ListOfString.AsObject;
+  static serializeBinaryToWriter(message: ListOfString, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListOfString;
+  static deserializeBinaryFromReader(message: ListOfString, reader: jspb.BinaryReader): ListOfString;
+}
+
+export namespace ListOfString {
+  export type AsObject = {
+    listList: Array<string>,
+  }
+}
+
+export class ListOfBytes extends jspb.Message {
+  getListList(): Array<Uint8Array | string>;
+  setListList(value: Array<Uint8Array | string>): ListOfBytes;
+  clearListList(): ListOfBytes;
+  addList(value: Uint8Array | string, index?: number): ListOfBytes;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListOfBytes.AsObject;
+  static toObject(includeInstance: boolean, msg: ListOfBytes): ListOfBytes.AsObject;
+  static serializeBinaryToWriter(message: ListOfBytes, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListOfBytes;
+  static deserializeBinaryFromReader(message: ListOfBytes, reader: jspb.BinaryReader): ListOfBytes;
+}
+
+export namespace ListOfBytes {
+  export type AsObject = {
+    listList: Array<Uint8Array | string>,
+  }
+}
+
+export class ListOfInt64 extends jspb.Message {
+  getListList(): Array<number>;
+  setListList(value: Array<number>): ListOfInt64;
+  clearListList(): ListOfInt64;
+  addList(value: number, index?: number): ListOfInt64;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListOfInt64.AsObject;
+  static toObject(includeInstance: boolean, msg: ListOfInt64): ListOfInt64.AsObject;
+  static serializeBinaryToWriter(message: ListOfInt64, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListOfInt64;
+  static deserializeBinaryFromReader(message: ListOfInt64, reader: jspb.BinaryReader): ListOfInt64;
+}
+
+export namespace ListOfInt64 {
+  export type AsObject = {
+    listList: Array<number>,
+  }
+}
+
+export class ListOfFloat extends jspb.Message {
+  getListList(): Array<number>;
+  setListList(value: Array<number>): ListOfFloat;
+  clearListList(): ListOfFloat;
+  addList(value: number, index?: number): ListOfFloat;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListOfFloat.AsObject;
+  static toObject(includeInstance: boolean, msg: ListOfFloat): ListOfFloat.AsObject;
+  static serializeBinaryToWriter(message: ListOfFloat, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListOfFloat;
+  static deserializeBinaryFromReader(message: ListOfFloat, reader: jspb.BinaryReader): ListOfFloat;
+}
+
+export namespace ListOfFloat {
+  export type AsObject = {
+    listList: Array<number>,
+  }
+}
+
+export class ListOfBool extends jspb.Message {
+  getListList(): Array<boolean>;
+  setListList(value: Array<boolean>): ListOfBool;
+  clearListList(): ListOfBool;
+  addList(value: boolean, index?: number): ListOfBool;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListOfBool.AsObject;
+  static toObject(includeInstance: boolean, msg: ListOfBool): ListOfBool.AsObject;
+  static serializeBinaryToWriter(message: ListOfBool, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListOfBool;
+  static deserializeBinaryFromReader(message: ListOfBool, reader: jspb.BinaryReader): ListOfBool;
+}
+
+export namespace ListOfBool {
+  export type AsObject = {
+    listList: Array<boolean>,
+  }
+}
+
 export class Jwt extends jspb.Message {
   getJwt(): string;
   setJwt(value: string): Jwt;
@@ -306,27 +406,35 @@ export namespace ConfirmTaskRequest {
   }
 }
 
-export class CoreInfo extends jspb.Message {
+export class RequestInfoResponse extends jspb.Message {
   getMqUri(): string;
-  setMqUri(value: string): CoreInfo;
+  setMqUri(value: string): RequestInfoResponse;
 
   getCorePublicKey(): Uint8Array | string;
   getCorePublicKey_asU8(): Uint8Array;
   getCorePublicKey_asB64(): string;
-  setCorePublicKey(value: Uint8Array | string): CoreInfo;
+  setCorePublicKey(value: Uint8Array | string): RequestInfoResponse;
+
+  getRequestorIp(): string;
+  setRequestorIp(value: string): RequestInfoResponse;
+
+  getVersion(): string;
+  setVersion(value: string): RequestInfoResponse;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CoreInfo.AsObject;
-  static toObject(includeInstance: boolean, msg: CoreInfo): CoreInfo.AsObject;
-  static serializeBinaryToWriter(message: CoreInfo, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CoreInfo;
-  static deserializeBinaryFromReader(message: CoreInfo, reader: jspb.BinaryReader): CoreInfo;
+  toObject(includeInstance?: boolean): RequestInfoResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: RequestInfoResponse): RequestInfoResponse.AsObject;
+  static serializeBinaryToWriter(message: RequestInfoResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RequestInfoResponse;
+  static deserializeBinaryFromReader(message: RequestInfoResponse, reader: jspb.BinaryReader): RequestInfoResponse;
 }
 
-export namespace CoreInfo {
+export namespace RequestInfoResponse {
   export type AsObject = {
     mqUri: string,
     corePublicKey: Uint8Array | string,
+    requestorIp: string,
+    version: string,
   }
 }
 
@@ -440,29 +548,47 @@ export namespace CoLinkInternalTaskIDList {
   }
 }
 
-export class ProtocolOperatorInstance extends jspb.Message {
-  getInstanceId(): string;
-  setInstanceId(value: string): ProtocolOperatorInstance;
-
+export class StartProtocolOperatorRequest extends jspb.Message {
   getProtocolName(): string;
-  setProtocolName(value: string): ProtocolOperatorInstance;
+  setProtocolName(value: string): StartProtocolOperatorRequest;
 
   getUserId(): string;
-  setUserId(value: string): ProtocolOperatorInstance;
+  setUserId(value: string): StartProtocolOperatorRequest;
+
+  getUpgrade(): boolean;
+  setUpgrade(value: boolean): StartProtocolOperatorRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ProtocolOperatorInstance.AsObject;
-  static toObject(includeInstance: boolean, msg: ProtocolOperatorInstance): ProtocolOperatorInstance.AsObject;
-  static serializeBinaryToWriter(message: ProtocolOperatorInstance, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ProtocolOperatorInstance;
-  static deserializeBinaryFromReader(message: ProtocolOperatorInstance, reader: jspb.BinaryReader): ProtocolOperatorInstance;
+  toObject(includeInstance?: boolean): StartProtocolOperatorRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: StartProtocolOperatorRequest): StartProtocolOperatorRequest.AsObject;
+  static serializeBinaryToWriter(message: StartProtocolOperatorRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StartProtocolOperatorRequest;
+  static deserializeBinaryFromReader(message: StartProtocolOperatorRequest, reader: jspb.BinaryReader): StartProtocolOperatorRequest;
 }
 
-export namespace ProtocolOperatorInstance {
+export namespace StartProtocolOperatorRequest {
   export type AsObject = {
-    instanceId: string,
     protocolName: string,
     userId: string,
+    upgrade: boolean,
+  }
+}
+
+export class ProtocolOperatorInstanceId extends jspb.Message {
+  getInstanceId(): string;
+  setInstanceId(value: string): ProtocolOperatorInstanceId;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ProtocolOperatorInstanceId.AsObject;
+  static toObject(includeInstance: boolean, msg: ProtocolOperatorInstanceId): ProtocolOperatorInstanceId.AsObject;
+  static serializeBinaryToWriter(message: ProtocolOperatorInstanceId, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ProtocolOperatorInstanceId;
+  static deserializeBinaryFromReader(message: ProtocolOperatorInstanceId, reader: jspb.BinaryReader): ProtocolOperatorInstanceId;
+}
+
+export namespace ProtocolOperatorInstanceId {
+  export type AsObject = {
+    instanceId: string,
   }
 }
 

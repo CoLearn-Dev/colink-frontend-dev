@@ -465,47 +465,47 @@ export class CoLinkClient {
     this.methodDescriptorFinishTask);
   }
 
-  methodDescriptorRequestCoreInfo = new grpcWeb.MethodDescriptor(
-    '/colink.CoLink/RequestCoreInfo',
+  methodDescriptorRequestInfo = new grpcWeb.MethodDescriptor(
+    '/colink.CoLink/RequestInfo',
     grpcWeb.MethodType.UNARY,
     proto_colink_pb.Empty,
-    proto_colink_pb.CoreInfo,
+    proto_colink_pb.RequestInfoResponse,
     (request: proto_colink_pb.Empty) => {
       return request.serializeBinary();
     },
-    proto_colink_pb.CoreInfo.deserializeBinary
+    proto_colink_pb.RequestInfoResponse.deserializeBinary
   );
 
-  requestCoreInfo(
+  requestInfo(
     request: proto_colink_pb.Empty,
-    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.CoreInfo>;
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.RequestInfoResponse>;
 
-  requestCoreInfo(
+  requestInfo(
     request: proto_colink_pb.Empty,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: proto_colink_pb.CoreInfo) => void): grpcWeb.ClientReadableStream<proto_colink_pb.CoreInfo>;
+               response: proto_colink_pb.RequestInfoResponse) => void): grpcWeb.ClientReadableStream<proto_colink_pb.RequestInfoResponse>;
 
-  requestCoreInfo(
+  requestInfo(
     request: proto_colink_pb.Empty,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: proto_colink_pb.CoreInfo) => void) {
+               response: proto_colink_pb.RequestInfoResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/colink.CoLink/RequestCoreInfo',
+          '/colink.CoLink/RequestInfo',
         request,
         metadata || {},
-        this.methodDescriptorRequestCoreInfo,
+        this.methodDescriptorRequestInfo,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/colink.CoLink/RequestCoreInfo',
+      '/colink.CoLink/RequestInfo',
     request,
     metadata || {},
-    this.methodDescriptorRequestCoreInfo);
+    this.methodDescriptorRequestInfo);
   }
 
   methodDescriptorSubscribe = new grpcWeb.MethodDescriptor(
@@ -597,29 +597,29 @@ export class CoLinkClient {
   methodDescriptorStartProtocolOperator = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/StartProtocolOperator',
     grpcWeb.MethodType.UNARY,
-    proto_colink_pb.ProtocolOperatorInstance,
-    proto_colink_pb.ProtocolOperatorInstance,
-    (request: proto_colink_pb.ProtocolOperatorInstance) => {
+    proto_colink_pb.StartProtocolOperatorRequest,
+    proto_colink_pb.ProtocolOperatorInstanceId,
+    (request: proto_colink_pb.StartProtocolOperatorRequest) => {
       return request.serializeBinary();
     },
-    proto_colink_pb.ProtocolOperatorInstance.deserializeBinary
+    proto_colink_pb.ProtocolOperatorInstanceId.deserializeBinary
   );
 
   startProtocolOperator(
-    request: proto_colink_pb.ProtocolOperatorInstance,
-    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.ProtocolOperatorInstance>;
+    request: proto_colink_pb.StartProtocolOperatorRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.ProtocolOperatorInstanceId>;
 
   startProtocolOperator(
-    request: proto_colink_pb.ProtocolOperatorInstance,
+    request: proto_colink_pb.StartProtocolOperatorRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: proto_colink_pb.ProtocolOperatorInstance) => void): grpcWeb.ClientReadableStream<proto_colink_pb.ProtocolOperatorInstance>;
+               response: proto_colink_pb.ProtocolOperatorInstanceId) => void): grpcWeb.ClientReadableStream<proto_colink_pb.ProtocolOperatorInstanceId>;
 
   startProtocolOperator(
-    request: proto_colink_pb.ProtocolOperatorInstance,
+    request: proto_colink_pb.StartProtocolOperatorRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: proto_colink_pb.ProtocolOperatorInstance) => void) {
+               response: proto_colink_pb.ProtocolOperatorInstanceId) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -640,26 +640,26 @@ export class CoLinkClient {
   methodDescriptorStopProtocolOperator = new grpcWeb.MethodDescriptor(
     '/colink.CoLink/StopProtocolOperator',
     grpcWeb.MethodType.UNARY,
-    proto_colink_pb.ProtocolOperatorInstance,
+    proto_colink_pb.ProtocolOperatorInstanceId,
     proto_colink_pb.Empty,
-    (request: proto_colink_pb.ProtocolOperatorInstance) => {
+    (request: proto_colink_pb.ProtocolOperatorInstanceId) => {
       return request.serializeBinary();
     },
     proto_colink_pb.Empty.deserializeBinary
   );
 
   stopProtocolOperator(
-    request: proto_colink_pb.ProtocolOperatorInstance,
+    request: proto_colink_pb.ProtocolOperatorInstanceId,
     metadata: grpcWeb.Metadata | null): Promise<proto_colink_pb.Empty>;
 
   stopProtocolOperator(
-    request: proto_colink_pb.ProtocolOperatorInstance,
+    request: proto_colink_pb.ProtocolOperatorInstanceId,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
                response: proto_colink_pb.Empty) => void): grpcWeb.ClientReadableStream<proto_colink_pb.Empty>;
 
   stopProtocolOperator(
-    request: proto_colink_pb.ProtocolOperatorInstance,
+    request: proto_colink_pb.ProtocolOperatorInstanceId,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
                response: proto_colink_pb.Empty) => void) {
@@ -721,6 +721,28 @@ export class CoLinkClient {
     request,
     metadata || {},
     this.methodDescriptorInterCoreSyncTask);
+  }
+
+  methodDescriptorInterCoreSyncTaskWithReverseConnection = new grpcWeb.MethodDescriptor(
+    '/colink.CoLink/InterCoreSyncTaskWithReverseConnection',
+    grpcWeb.MethodType.SERVER_STREAMING,
+    proto_colink_pb.Task,
+    proto_colink_pb.Task,
+    (request: proto_colink_pb.Task) => {
+      return request.serializeBinary();
+    },
+    proto_colink_pb.Task.deserializeBinary
+  );
+
+  interCoreSyncTaskWithReverseConnection(
+    request: proto_colink_pb.Task,
+    metadata?: grpcWeb.Metadata): grpcWeb.ClientReadableStream<proto_colink_pb.Task> {
+    return this.client_.serverStreaming(
+      this.hostname_ +
+        '/colink.CoLink/InterCoreSyncTaskWithReverseConnection',
+      request,
+      metadata || {},
+      this.methodDescriptorInterCoreSyncTaskWithReverseConnection);
   }
 
 }

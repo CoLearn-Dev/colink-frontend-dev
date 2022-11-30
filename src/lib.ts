@@ -1,6 +1,6 @@
 /* TEMPORARY FILE - will convert to npm package in the future via colink-sdk-a-js-dev */
 
-import { CoreInfo, Empty, UserConsent, Jwt, GenerateTokenRequest, StorageEntry, StorageEntries, ReadKeysRequest } from '../proto_js/colink_pb';
+import { RequestInfoResponse, Empty, UserConsent, Jwt, GenerateTokenRequest, StorageEntry, StorageEntries, ReadKeysRequest } from '../proto_js/colink_pb';
 import { CoLinkClient } from '../proto_js/ColinkServiceClientPb';
 import secp256k1 from 'secp256k1';
 import crypto from 'crypto';
@@ -32,6 +32,12 @@ function getNameEntry (input: string | StorageEntry): StorageEntry {
     } else {
         return input;
     }
+}
+
+function getUserId (jwt: string): string {
+    let encodedId: string = jwt.split(".")[1];
+    let userId: string = JSON.parse(Buffer.from(encodedId, "base64").toString()).user_id;
+    return userId;
 }
 
 /* Handles USER DATA (private keys, Jwts, etc) */
@@ -69,7 +75,7 @@ export async function generateJwtFromKey(address: string | CoLinkClient, private
     timeBuf.writeBigUInt64LE(BigInt(timestamp));
 
     let exp: number;
-    if (typeof expirationTimestamp !== 'undefined') {
+    if (typeof expirationTimestamp !== 'undefined' && expirationTimestamp !== 0) {
         exp = expirationTimestamp;
     } else {
         exp = timestamp + 86400 * 31; // 31 day expiration date by default
@@ -80,7 +86,7 @@ export async function generateJwtFromKey(address: string | CoLinkClient, private
     
     // get core public key
     let coreReq: Empty = new Empty();
-    let response: CoreInfo = await client.requestCoreInfo(coreReq, meta);
+    let response: RequestInfoResponse = await client.requestInfo(coreReq, meta);
     let corePubKey: Uint8Array = response.getCorePublicKey_asU8();
 
     // prep signature + request
@@ -133,14 +139,36 @@ export async function generateToken(address: string | CoLinkClient, oldJwt: stri
     return Promise.resolve(newJwt);
 }
 
+export async function validateJwtAndPrivilege(address: string | CoLinkClient, jwt: string): Promise<string> {
+    let meta = getMetadata(jwt);
+    let client: CoLinkClient = getClient(address);
+    let coreReq: Empty = new Empty();
+    try {
+        let response: RequestInfoResponse = await client.requestInfo(coreReq, meta);
+        if (response.getMqUri().length > 0) {
+            return "user";
+        } else {
+            return "host";
+        }
+    } catch (err) {
+        return "invalid";
+    }
+}
+
 export function daysToTimestamp(days: number) {
     let currentTime: number = parseInt((Date.now() / 1000).toFixed()); // convert milliseconds to seconds
     return currentTime + 86400 * days;
 }
 
 /* Handles STORAGE OPERATIONS (read, write, update, etc.) */
-export function storageEntryToJSON(entry: StorageEntry){
-    return {name: keyNameFromPath(entry.getKeyPath()), keyPath: entry.getKeyPath(), payload: entry.getPayload_asB64()};
+export function storageEntryToJSON(entry: StorageEntry, isString: boolean){
+    let payload: string;
+    if (isString) {
+        payload = new TextDecoder().decode(entry.getPayload_asU8());
+    } else {
+        payload = entry.getPayload_asB64();
+    }
+    return {name: keyNameFromPath(entry.getKeyPath()), keyPath: entry.getKeyPath(), payload: payload};
 }
 
 export function keyNameFromPath(keyPath: string): string {
@@ -152,7 +180,7 @@ export function keyNameFromPath(keyPath: string): string {
     throw Error("Error in keyPath parsing");
 }
 
-function lastKeyNameFromPath(keyPath: string): string {
+export function lastKeyNameFromPath(keyPath: string): string {
     const pattern = /::(.+)@/;
     let matches = keyPath.match(pattern);
     if (matches != null) {
@@ -248,9 +276,7 @@ export async function deleteEntry(address: string | CoLinkClient, jwt: string, o
 
 export async function getUserStorageEntries(address: string | CoLinkClient, jwt: string): Promise<StorageEntry[]> {
     let client: CoLinkClient = getClient(address);
-
-    let encodedId: string = jwt.split(".")[1];
-    let userId: string = JSON.parse(Buffer.from(encodedId, "base64").toString()).user_id;
+    let userId: string = getUserId(jwt);
 
     let entries: StorageEntry[] = []
     let meta = getMetadata(jwt);
@@ -259,7 +285,6 @@ export async function getUserStorageEntries(address: string | CoLinkClient, jwt:
         let req: ReadKeysRequest = new ReadKeysRequest();
         req.setPrefix(prefix);
         req.setIncludeHistory(false);
-
 
         let newPrefixes: string[] = [];
         await client.readKeys(req, meta)
@@ -278,13 +303,20 @@ export async function getUserStorageEntries(address: string | CoLinkClient, jwt:
     let startingPrefix = userId + ":";
     let keyPrefixes: string[] = [startingPrefix];
 
+    /* Generates all layers psuedo-recursively */
     while (keyPrefixes.length > 0) {
         for (let prefix of keyPrefixes) {
-            keyPrefixes = keyPrefixes.concat(await updateEntries(prefix)).slice(1);
+            let newKeys: string[] = await updateEntries(prefix);
+            keyPrefixes = keyPrefixes.concat(newKeys).slice(1);
         }
+    }
+
+    /* Generates one layer */
+    for (let prefix of keyPrefixes) {
+        keyPrefixes = keyPrefixes.concat(await updateEntries(prefix)).slice(1);
     }
     
     entries.sort((a, b) => { return keyNameFromPath(a.getKeyPath()) < keyNameFromPath(b.getKeyPath()) ? -1 : 1 });
-    return entries;
+    return Promise.resolve(entries);
 }
 

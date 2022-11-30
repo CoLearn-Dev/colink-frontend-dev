@@ -6,8 +6,8 @@
     position: relative;
     margin: 0 auto;
    
-    padding: 10px;
-    max-width: 1000px;
+    padding: 20px;
+    max-width: 1500px;
     height: 500px;
     
     background-color: #FAFAFA;
@@ -30,8 +30,17 @@
     flex-direction: row;
 }
 
+.modalFieldSmall {
+    width: 20%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .modalField {
-    width: 33%;
+    width: 40%;
     height: 100%;
 
     display: flex;
@@ -97,14 +106,15 @@
     width: 100%;
 }
 
-.innerInfo > button {
+/* .innerInfo > button {
     margin-top: 100px;
-}
+} */
 
 .modalField > textarea, .modalInners > textarea {
     resize: none;
     width: 200px;
     height: 75px;
+    margin-left: 12px;
 }
 
 .modalField > input[type="text"] {

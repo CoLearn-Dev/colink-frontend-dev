@@ -15,8 +15,7 @@ function App(): JSX.Element {
   const[client, setClient] = useState(new CoLinkClient(""));
 
   const[clientHostname, setClientHostname] = useState(localStorage.getItem("clientHostname") || "");
-  const[hostToken, setHostToken] = useState(localStorage.getItem("hostToken") || "");
-  const[clientJwt, setClientJwt] = useState(localStorage.getItem("clientJwt") || "");
+  const[jwt, setJwt] = useState(localStorage.getItem("jwt") || "");
 
   const[isAdmin, setAdminStatus] = useState(localStorage.getItem("isAdmin") === "true" || false);
 
@@ -26,19 +25,15 @@ function App(): JSX.Element {
   }, [clientHostname]);
 
   useEffect(() => {
-    localStorage.setItem("hostToken", hostToken);
-  }, [hostToken]);
-
-  useEffect(() => {
-    localStorage.setItem("clientJwt", clientJwt);
-  }, [clientJwt]);
+    localStorage.setItem("jwt", jwt);
+  }, [jwt]);
 
   useEffect(() => {
     localStorage.setItem("isAdmin", String(isAdmin));
   }, [isAdmin]);
 
   function clientInitialized(): boolean {
-    return clientHostname !== "" && (hostToken !== "" || clientJwt !== "");
+    return clientHostname !== "" && jwt !== "";
   }
 
   return (
@@ -52,11 +47,11 @@ function App(): JSX.Element {
               <>
                 {clientInitialized() ? 
                   <>{isAdmin ? <Navigate to="/settings" /> : <Navigate to="/storage" />}</> : 
-                <LoginPanel setHostname={setClientHostname} setToken={setHostToken} setJwt={setClientJwt} setAdminStatus={setAdminStatus} />}
+                <LoginPanel setHostname={setClientHostname} setJwt={setJwt} setAdminStatus={setAdminStatus} />}
               </>
             } />
-            <Route path="settings" element={<Settings client={client} setClient={setClientHostname} hostToken={hostToken} setHostToken={setHostToken} jwt={clientJwt} setJwt={setClientJwt} isAdmin={isAdmin} />}></Route>
-            <Route path="storage" element={<StoragePanel client={client} hostToken={hostToken} jwt={clientJwt} />}></Route>
+            <Route path="settings" element={<Settings client={client} setClient={setClientHostname} jwt={jwt} setJwt={setJwt} isAdmin={isAdmin} setAdmin={setAdminStatus} />}></Route>
+            <Route path="storage" element={<StoragePanel client={client} jwt={jwt} />}></Route>
             <Route path="computation" element={<></>}></Route>
           </Route>
         </Routes>

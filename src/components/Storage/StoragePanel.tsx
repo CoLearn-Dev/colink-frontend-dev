@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { createEntry, readEntry, updateEntry, deleteEntry, getUserStorageEntries } from '../../lib';
-import { keyNameFromPath, storageEntryToJSON } from '../../lib';
+import { createEntry, keyNameFromPath, lastKeyNameFromPath, readEntry, updateEntry, deleteEntry, getUserStorageEntries } from '../../lib';
+import { storageEntryToJSON } from '../../lib';
 import { StorageEntry } from '../../../proto_js/colink_pb';
 import { createDownloadHref } from '../../utils';
 import styles from './StoragePanel.module.css';
@@ -11,7 +11,6 @@ import Container from 'react-bootstrap/Container';
 
 interface Props {
     client: CoLinkClient,
-    hostToken: string,
     jwt: string
 }
 
@@ -35,20 +34,22 @@ export const StoragePanel: React.FC<Props> = (props) => {
     // Variables to display data
     const defEmpty = new StorageEntry();
     const [displayEntry, updateDisplay] = useState(defEmpty);
+    const [isString, updateB64] = useState(true);
 
     useEffect(() => {
         async function getData() {
             await getUserStorageEntries(props.client, props.jwt)
                 .then((entries: StorageEntry[]) => {
-                    let keys: string[] = entries.map((entry: StorageEntry) => {return keyNameFromPath(entry.getKeyPath());});
-                    updateEntries(keys);
+                    let paths: string[] = entries.map((entry: StorageEntry) => {return entry.getKeyPath();});
+                    updateEntries([...paths]);
                 });  
+            return true; // resolve lingering promises
         }
 
-        if (props.jwt != "") {
+        if (props.jwt != "" && props.client.hostname_ != "") {
             getData();
         }
-    }, [props.jwt]);
+    }, [props.jwt, props.client]);
 
     if (props.jwt == "") {
         return (
@@ -60,7 +61,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
 
     function createEntryPanel(): JSX.Element {
         return (
-            <div className={styles.modalField}>
+            <div className={styles.modalFieldSmall}>
                 <h3>Create Entry</h3>
                 <span>Key:</span>
                 <input type="text" value={key} onChange={(e) => { updateKey(e.target.value); }}></input><br />
@@ -69,11 +70,8 @@ export const StoragePanel: React.FC<Props> = (props) => {
                 <button onClick={() => {
                     createEntry(props.client, props.jwt, key, payload)
                         .then((entry: StorageEntry) => {
-                            if (entry.toString() !== defEmpty.toString()) {
-                                entries.push(key);
-                                entries.sort();
-                                updateEntries([...entries]);
-                            }
+                            entries.push(entry.getKeyPath())
+                            updateEntries([...entries]);
                             updateKey("");
                             updatePayload("");
                         })
@@ -88,8 +86,10 @@ export const StoragePanel: React.FC<Props> = (props) => {
     function createEntryList(): JSX.Element {
 
         function entryTableMap(): JSX.Element[] {
-            return entries.map((keyName: string, i: number) => {
-                return (<tr key={keyName}
+            return entries.map((path: string, i: number) => {
+                let keyName = keyNameFromPath(path);
+                let displayName = lastKeyNameFromPath(path);
+                return (<tr key={displayName}
                     onClick={() => {
                         if (selectKey === keyName) {
                             updateSelected("");
@@ -105,7 +105,7 @@ export const StoragePanel: React.FC<Props> = (props) => {
                         }
                     }}>
                     <th style={keyName == selectKey ? { backgroundColor: "#DDDDDD", paddingLeft: numColons(keyName) } :
-                        { paddingLeft: numColons(keyName) }}>{keyName}
+                        { paddingLeft: numColons(keyNameFromPath(path)) }}>{displayName}
                     </th>
                 </tr>)
             })
@@ -114,7 +114,6 @@ export const StoragePanel: React.FC<Props> = (props) => {
         return (
             <>
                 <h3>Entry List</h3>
-                Selected Key: {selectKey}
                 <div className={styles.tableDisplay}>
                     <table style={entries.length > 0 ? { border: "1px solid black" } : {}}>
                         <tbody>
@@ -148,32 +147,32 @@ export const StoragePanel: React.FC<Props> = (props) => {
     function deleteEntryButton(): JSX.Element {
         return (
             <button onClick={() => {
-                let currentKey: string = entries[selectIndex];
-                deleteEntry(props.client, props.jwt, currentKey)
+                let currentPath: string = entries[selectIndex];
+                deleteEntry(props.client, props.jwt, new StorageEntry().setKeyPath(currentPath))
                     .then(() => {
-                        entries.splice(entries.indexOf(currentKey), 1);
+                        entries.splice(selectIndex, 1);
                         updateEntries([...entries]);
 
                         // logic to show entry above the deleted one in the display panel
-                        if (keyNameFromPath(displayEntry.getKeyPath()) === currentKey) {
-                            let newIndex = Math.max(selectIndex - 1, 0);
-                            updateIndex(newIndex);
-                            if (entries.length > 0) {
-                                let newKey = entries[newIndex];
-                                updateSelected(newKey);
-                                readEntry(props.client, props.jwt, newKey)
-                                    .then(response => {
-                                        updateDisplay(response);
-                                    })
-                                    .catch(err => {
-                                        alert(err);
-                                    });
-                            }
-                            else {
-                                updateDisplay(defEmpty);
-                                updateSelected("")
-                            }
-                        }
+                        // if (displayEntry.getKeyName() === keyNameFromPath(currentPath)) {
+                        //     let newIndex = Math.max(selectIndex - 1, 0);
+                        //     updateIndex(newIndex);
+                        //     if (entries.length > 0) {
+                        //         let newKey = entries[newIndex];
+                        //         updateSelected(newKey);
+                        //         readEntry(props.client, props.jwt, newKey)
+                        //             .then(response => {
+                        //                 updateDisplay(response);
+                        //             })
+                        //             .catch(err => {
+                        //                 alert(err);
+                        //             });
+                        //     }
+                        //     else {
+                        //         updateDisplay(defEmpty);
+                        //         updateSelected("")
+                        //     }
+                        // }
                     });
             }}>Delete Entry</button>
         )
@@ -183,19 +182,24 @@ export const StoragePanel: React.FC<Props> = (props) => {
         return (
             <>
                 <h3>Entry Info</h3>
+                { isString ? <>Downloading as String</> : <>Downloading as Bytes</> }  
+                <button style={{ display: "inline-block" }} onClick={() => {updateB64(!isString)}}>Toggle</button><br />
                 <div className={styles.innerDisplay}>
                     {displayEntry.toString() === defEmpty.toString() ?
                         <div></div> :
-                        <div className={styles.innerInfo}>
-                            <div style={{ whiteSpace: "pre-wrap", textAlign: "left", overflowWrap: "break-word", width: "100%" }}>
-                                {JSON.stringify(storageEntryToJSON(displayEntry), null, 2)}
-                            </div>
+                        <>
+                            <div className={styles.innerInfo}>
+                                <div style={{ whiteSpace: "pre-wrap", textAlign: "left", overflowWrap: "break-word", width: "100%" }}>
+                                    {JSON.stringify(storageEntryToJSON(displayEntry, isString), null, 2)}
+                                </div>
+                            </div><br />
                             <button>
                                 <a download="payload.txt"
-                                    href={createDownloadHref(JSON.stringify(storageEntryToJSON(displayEntry), null, 2))}>Download
+                                    href={createDownloadHref(JSON.stringify(storageEntryToJSON(displayEntry, isString), null, 2))}>Download
                                 </a>
                             </button>
-                        </div>}
+                        </>            
+                        }
                 </div>
             </>
         )
