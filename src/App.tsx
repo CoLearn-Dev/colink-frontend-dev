@@ -52,7 +52,7 @@ function App(): JSX.Element {
             } />
             <Route path="settings" element={<Settings client={client} setClient={setClientHostname} jwt={jwt} setJwt={setJwt} isAdmin={isAdmin} setAdmin={setAdminStatus} />}></Route>
             <Route path="storage" element={<StoragePanel client={client} jwt={jwt} />}></Route>
-            <Route path="computation" element={<></>}></Route>
+            <Route path="tasks" element={<></>}></Route>
           </Route>
         </Routes>
       </Router>

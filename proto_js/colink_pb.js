@@ -1991,7 +1991,8 @@ proto.colink.GenerateTokenRequest.prototype.toObject = function(opt_includeInsta
 proto.colink.GenerateTokenRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     expirationTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    privilege: jspb.Message.getFieldWithDefault(msg, 2, "")
+    privilege: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    userConsent: (f = msg.getUserConsent()) && proto.colink.UserConsent.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2036,6 +2037,11 @@ proto.colink.GenerateTokenRequest.deserializeBinaryFromReader = function(msg, re
       var value = /** @type {string} */ (reader.readString());
       msg.setPrivilege(value);
       break;
+    case 3:
+      var value = new proto.colink.UserConsent;
+      reader.readMessage(value,proto.colink.UserConsent.deserializeBinaryFromReader);
+      msg.setUserConsent(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2079,6 +2085,14 @@ proto.colink.GenerateTokenRequest.serializeBinaryToWriter = function(message, wr
       f
     );
   }
+  f = message.getUserConsent();
+  if (f != null) {
+    writer.writeMessage(
+      3,
+      f,
+      proto.colink.UserConsent.serializeBinaryToWriter
+    );
+  }
 };
 
 
@@ -2115,6 +2129,43 @@ proto.colink.GenerateTokenRequest.prototype.getPrivilege = function() {
  */
 proto.colink.GenerateTokenRequest.prototype.setPrivilege = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional UserConsent user_consent = 3;
+ * @return {?proto.colink.UserConsent}
+ */
+proto.colink.GenerateTokenRequest.prototype.getUserConsent = function() {
+  return /** @type{?proto.colink.UserConsent} */ (
+    jspb.Message.getWrapperField(this, proto.colink.UserConsent, 3));
+};
+
+
+/**
+ * @param {?proto.colink.UserConsent|undefined} value
+ * @return {!proto.colink.GenerateTokenRequest} returns this
+*/
+proto.colink.GenerateTokenRequest.prototype.setUserConsent = function(value) {
+  return jspb.Message.setWrapperField(this, 3, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.colink.GenerateTokenRequest} returns this
+ */
+proto.colink.GenerateTokenRequest.prototype.clearUserConsent = function() {
+  return this.setUserConsent(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.colink.GenerateTokenRequest.prototype.hasUserConsent = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 

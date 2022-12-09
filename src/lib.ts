@@ -5,9 +5,13 @@ import { CoLinkClient } from '../proto_js/ColinkServiceClientPb';
 import secp256k1 from 'secp256k1';
 import crypto from 'crypto';
 import { ethers } from 'ethers';
+import { Metadata } from 'grpc-web';
 
 // Required for grpc-web on SSR
 global.XMLHttpRequest = require('xhr2');
+
+// Required for MetaMask wallet detection
+declare let window: any;
 
 /* Utility functions */
 function getClient(input: string | CoLinkClient): CoLinkClient {
@@ -40,6 +44,10 @@ function getUserId (jwt: string): string {
     return userId;
 }
 
+function i2hex (i: Uint8Array): string {
+    return Buffer.from(i).toString('hex');
+}
+
 /* Handles USER DATA (private keys, Jwts, etc) */
 export class UserData {
     privateKey: string;
@@ -49,6 +57,83 @@ export class UserData {
         this.privateKey = pk;
         this.userJwt = jwt;
     }
+}
+
+async function getUserConsentPK(client: CoLinkClient, meta: Metadata | null, pubKey: Uint8Array, privKey: Uint8Array, expirationTimestamp?: number): Promise<UserConsent> {
+    // get timestamps
+    let sigTime: number = parseInt((Date.now() / 1000).toFixed()); // Date.now() returns milliseconds, must convert to seconds
+    let sigTimeBuf: Buffer = Buffer.alloc(8);
+    sigTimeBuf.writeBigUInt64LE(BigInt(sigTime));
+
+    let expTime: number;
+    if (typeof expirationTimestamp !== 'undefined' && expirationTimestamp !== 0) {
+        expTime = expirationTimestamp;
+    } else {
+        expTime = sigTime + 86400 * 31; // 31 day expiration date by default
+    }
+    
+    let expTimeBuf: Buffer = Buffer.alloc(8);
+    expTimeBuf.writeBigUInt64LE(BigInt(expTime));
+    
+    // get core public key
+    let coreReq: Empty = new Empty();
+    let response: RequestInfoResponse = await client.requestInfo(coreReq, meta);
+    let corePubKey: Uint8Array = response.getCorePublicKey_asU8();
+
+    // prep signature + request
+    let msg: Buffer = Buffer.concat([pubKey, sigTimeBuf, expTimeBuf, corePubKey]);
+    let hash = crypto.createHash('sha256').update(msg).digest('hex');
+    let signature: Uint8Array = secp256k1.ecdsaSign(Buffer.from(hash, 'hex'), privKey).signature;
+    let request: UserConsent = new UserConsent();
+    request.setPublicKey(pubKey);
+    request.setSignatureTimestamp(sigTime);
+    request.setSignature(signature);
+    request.setExpirationTimestamp(expTime);
+
+    return request;
+}
+
+async function getUserConsentMM(client: CoLinkClient, meta: Metadata | null, expirationTimestamp?: number): Promise<UserConsent> {
+    // connect to MetaMask wallet
+    if (!window.ethereum)
+        throw new Error("No crypto wallet found. Please install it.");
+
+    await window.ethereum.request({
+        method: "eth_requestAccounts"
+    });
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    
+    // get timestamps
+    let sigTime: number = parseInt((Date.now() / 1000).toFixed()); // Date.now() returns milliseconds, must convert to seconds
+    let sigTimeStr: string = sigTime.toString();
+
+    let expTime: number;
+    if (typeof expirationTimestamp !== 'undefined' && expirationTimestamp !== 0) {
+        expTime = expirationTimestamp;
+    } else {
+        expTime = (sigTime + 86400 * 31); // 31 day expiration date by default
+    }
+    let expTimeStr: string = expTime.toString();
+    
+    // get core public key
+    let coreReq: Empty = new Empty();
+    let response: RequestInfoResponse = await client.requestInfo(coreReq, meta);
+    let corePubKey: string = i2hex(response.getCorePublicKey_asU8());
+
+    // prep signature + request
+    let msg: string = `sigTime: ${sigTimeStr}\nexpTime: ${expTimeStr}\ncorePubKey: ${corePubKey}\n`
+    
+    let signature = await signer.signMessage(msg);
+    let sigBuf = Buffer.from(signature.slice(2), 'hex');
+
+    let request: UserConsent = new UserConsent();
+    request.setSignatureTimestamp(sigTime);
+    request.setSignature(sigBuf);
+    request.setExpirationTimestamp(expTime);
+
+    return request;
 }
 
 export async function generateKeyAndJwt(address: string | CoLinkClient, hostToken: string,
@@ -63,43 +148,14 @@ export async function generateJwtFromKey(address: string | CoLinkClient, private
     let client: CoLinkClient = getClient(address);
 
     // set metadata with admin token
-    let meta = getMetadata(hostToken);
+    let meta: Metadata = getMetadata(hostToken);
 
     // generate new (pubKey, privKey) pair with privateKey
     let privKey: Uint8Array = Uint8Array.from(Buffer.from(privateKey, "hex"));
     let pubKey: Uint8Array = secp256k1.publicKeyCreate(privKey, true);
 
-    // get timestamps
-    let timestamp: number = parseInt((Date.now() / 1000).toFixed()); // Date.now() returns milliseconds, must convert to seconds
-    let timeBuf: Buffer = Buffer.alloc(8);
-    timeBuf.writeBigUInt64LE(BigInt(timestamp));
+    let request: UserConsent = await getUserConsentPK(client, meta, pubKey, privKey, expirationTimestamp);
 
-    let exp: number;
-    if (typeof expirationTimestamp !== 'undefined' && expirationTimestamp !== 0) {
-        exp = expirationTimestamp;
-    } else {
-        exp = timestamp + 86400 * 31; // 31 day expiration date by default
-    }
-    
-    let expBuf: Buffer = Buffer.alloc(8);
-    expBuf.writeBigUInt64LE(BigInt(exp));
-    
-    // get core public key
-    let coreReq: Empty = new Empty();
-    let response: RequestInfoResponse = await client.requestInfo(coreReq, meta);
-    let corePubKey: Uint8Array = response.getCorePublicKey_asU8();
-
-    // prep signature + request
-    let msg: Buffer = Buffer.concat([pubKey, timeBuf, expBuf, corePubKey]);
-    let hash = crypto.createHash('sha256').update(msg).digest('hex');
-    let signature: Uint8Array = secp256k1.ecdsaSign(Buffer.from(hash, 'hex'), privKey).signature;
-
-    let request: UserConsent = new UserConsent();
-    request.setPublicKey(pubKey);
-    request.setSignatureTimestamp(timestamp);
-    request.setSignature(signature);
-    request.setExpirationTimestamp(exp);
-    
     // initiate jwt request
     let jwtToken: string = "";
     await client.importUser(request, meta)
@@ -113,11 +169,33 @@ export async function generateJwtFromKey(address: string | CoLinkClient, private
     return Promise.resolve(new UserData(privateKey, jwtToken));
 }
 
-declare let window: any;
-
-export async function generateToken(address: string | CoLinkClient, oldJwt: string, expirationTime?: number): Promise<string> {
+export async function generateJwtMetaMask(address: string | CoLinkClient, hostToken: string, expirationTimestamp?: number): Promise<UserData> {
     // generate CoLinkClient connection
     let client: CoLinkClient = getClient(address);
+
+    // set metadata with admin token
+    let meta: Metadata = getMetadata(hostToken);
+
+    let request: UserConsent = await getUserConsentMM(client, meta, expirationTimestamp);
+    
+    // initiate jwt request
+    let jwtToken: string = "";
+    await client.importUser(request, meta)
+        .then((jwt: Jwt) => {
+            jwtToken = jwt.getJwt();
+        })
+        .catch((err: Error) => {
+            alert(err);
+        });
+
+    return Promise.resolve(new UserData("", jwtToken));
+}
+
+export async function generateToken(address: string | CoLinkClient, oldJwt: string, useConsent: boolean, expirationTime?: number): Promise<string> {
+    // generate CoLinkClient connection
+    let client: CoLinkClient = getClient(address);
+
+    let meta: Metadata = getMetadata(oldJwt);
 
     let request: GenerateTokenRequest = new GenerateTokenRequest();
     if (typeof expirationTime !== 'undefined') {
@@ -125,16 +203,21 @@ export async function generateToken(address: string | CoLinkClient, oldJwt: stri
     } else {
         request.setExpirationTime(daysToTimestamp(31)); // 31 day default
     }
-    
-    let meta = getMetadata(oldJwt);
 
+    if (useConsent) {
+        let consent: UserConsent = await getUserConsentMM(client, meta);
+        request.setUserConsent(consent);
+    }
+
+    request.setPrivilege("user");
+    
     let newJwt: string = "";
     await client.generateToken(request, meta)
         .then((jwt: Jwt) => {
             newJwt = jwt.getJwt();
         })
         .catch((err: Error) => {
-            alert(err);
+            throw err;
         });
     return Promise.resolve(newJwt);
 }
@@ -166,7 +249,7 @@ export function storageEntryToJSON(entry: StorageEntry, isString: boolean){
     if (isString) {
         payload = new TextDecoder().decode(entry.getPayload_asU8());
     } else {
-        payload = entry.getPayload_asB64();
+        payload = i2hex(entry.getPayload_asU8());
     }
     return {name: keyNameFromPath(entry.getKeyPath()), keyPath: entry.getKeyPath(), payload: payload};
 }

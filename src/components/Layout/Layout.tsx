@@ -29,7 +29,7 @@ export const Layout: React.FC<Props> = (props) => {
                   <LinkContainer to="/storage">
                     <Nav.Link>Storage</Nav.Link>
                   </LinkContainer>
-                  <LinkContainer to="/computation">
+                  <LinkContainer to="/tasks">
                     <Nav.Link>Tasks</Nav.Link>
                   </LinkContainer>
                   <LinkContainer to="/settings">

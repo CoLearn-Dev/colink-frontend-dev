@@ -189,6 +189,11 @@ export class GenerateTokenRequest extends jspb.Message {
   getPrivilege(): string;
   setPrivilege(value: string): GenerateTokenRequest;
 
+  getUserConsent(): UserConsent | undefined;
+  setUserConsent(value?: UserConsent): GenerateTokenRequest;
+  hasUserConsent(): boolean;
+  clearUserConsent(): GenerateTokenRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GenerateTokenRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GenerateTokenRequest): GenerateTokenRequest.AsObject;
@@ -201,6 +206,7 @@ export namespace GenerateTokenRequest {
   export type AsObject = {
     expirationTime: number,
     privilege: string,
+    userConsent?: UserConsent.AsObject,
   }
 }
 
