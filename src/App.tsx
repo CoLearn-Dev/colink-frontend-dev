@@ -41,7 +41,7 @@ function App(): JSX.Element {
       <Router>
         <Routes>
           <Route path="/" element={
-            <Layout />
+            <Layout jwt={jwt} setJwt={setJwt} />
           }>
             <Route index element={
               <>

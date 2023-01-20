@@ -85,23 +85,60 @@ export const StoragePanel: React.FC<Props> = (props) => {
 
     function createEntryList(): JSX.Element {
 
+        function isEnd(path: string) {
+            return path.slice(-2) !== "@0";
+        }
+
         function entryTableMap(): JSX.Element[] {
             return entries.map((path: string, i: number) => {
                 let keyName = keyNameFromPath(path);
                 let displayName = lastKeyNameFromPath(path);
-                return (<tr key={displayName}
-                    onClick={() => {
+                if (!isEnd(path)) {
+                    displayName = "* " + displayName;
+                }
+                return (<tr key={i}
+                    onClick={async () => {
+                        console.log(path)
                         if (selectKey === keyName) {
-                            updateSelected("");
                             updateIndex(-1);
-                            updateDisplay(defEmpty)
+                            if (isEnd(path)) {
+                                updateDisplay(defEmpty)
+                                updateSelected("");
+                            } else {
+                                if (typeof entries.find(item => { return item.includes(path.substring(0, path.indexOf("@"))) && item !== path}) === "undefined") {
+                                    await getUserStorageEntries(props.client, props.jwt, path.substring(0, path.indexOf("@")))
+                                    .then((newEntries: StorageEntry[]) => {
+                                        let insertIndex = entries.indexOf(path) + 1;
+                                        entries.splice(insertIndex, 0, ...newEntries.map((entry: StorageEntry) => {return entry.getKeyPath();}))
+                                        updateEntries([...entries]);
+                                    });  
+                                } else {
+                                    let newEntries: string[] = entries.filter(item => { return !item.includes(path.substring(0, path.indexOf("@"))) || item === path})
+                                    console.log(newEntries)
+                                    updateEntries([...newEntries])
+                                }
+                            }
                         } else {
                             updateSelected(keyName);
                             updateIndex(i);
-                            readEntry(props.client, props.jwt, keyName)
-                            .then((entry: StorageEntry) => {
-                                updateDisplay(entry);
-                            });
+                            if (isEnd(path)) {
+                                readEntry(props.client, props.jwt, keyName)
+                                    .then((entry: StorageEntry) => {
+                                        updateDisplay(entry);
+                                    });
+                            } else {
+                                if (typeof entries.find(item => { return item.includes(path.substring(0, path.indexOf("@"))) && item !== path}) === "undefined") {
+                                    await getUserStorageEntries(props.client, props.jwt, path.substring(0, path.indexOf("@")))
+                                    .then((newEntries: StorageEntry[]) => {
+                                        let insertIndex = entries.indexOf(path) + 1;
+                                        entries.splice(insertIndex, 0, ...newEntries.map((entry: StorageEntry) => {return entry.getKeyPath();}))
+                                        updateEntries([...entries]);
+                                    });  
+                                } else {
+                                    let newEntries: string[] = entries.filter(item => { return !item.includes(path.substring(0, path.indexOf("@"))) || item === path})
+                                    updateEntries([...newEntries])
+                                }
+                            }
                         }
                     }}>
                     <th style={keyName == selectKey ? { backgroundColor: "#DDDDDD", paddingLeft: numColons(keyName) } :

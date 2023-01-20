@@ -43,6 +43,9 @@ async function getUserData(method: Function, callbacks: [Function | null, Functi
                     setJwt(res.userJwt);
                 }
             }
+        })
+        .catch((err: Error) => {
+            alert(err);
         });
 }
 

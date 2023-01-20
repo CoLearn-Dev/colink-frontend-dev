@@ -11,7 +11,8 @@ import { Outlet, Link } from "react-router-dom";
 import { LinkContainer } from 'react-router-bootstrap';
 
 interface Props {
-
+  jwt: string,
+  setJwt: Function,
 }
 
 export const Layout: React.FC<Props> = (props) => {
@@ -35,18 +36,22 @@ export const Layout: React.FC<Props> = (props) => {
                   <LinkContainer to="/settings">
                     <Nav.Link>Settings</Nav.Link>
                   </LinkContainer>
-                  {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                    <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.2">
-                      Another action
-                    </NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action/3.4">
-                      Separated link
-                    </NavDropdown.Item>
-                  </NavDropdown> */}
                 </Nav>
+                {props.jwt != "" ? 
+                  <>
+                    <NavDropdown title={props.jwt.slice(0, 15) + "..."} id="basic-nav-dropdown" className="ml-auto">
+                      <NavDropdown.ItemText style={{width: "250px", overflowWrap: "break-word"}}>{props.jwt}</NavDropdown.ItemText>
+                      <NavDropdown.Divider />
+                      <LinkContainer to="/settings">
+                        <NavDropdown.Item>Settings</NavDropdown.Item>
+                      </LinkContainer>
+                    <LinkContainer to="/" onClick={()=>{props.setJwt("")}}>
+                      <NavDropdown.Item>Log Out</NavDropdown.Item>
+                    </LinkContainer>
+                  </NavDropdown>
+                  </> : <Nav className="ml-auto">Log In</Nav>
+                }
+                
               </Navbar.Collapse>
             </Container>
           </Navbar>

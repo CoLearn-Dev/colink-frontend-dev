@@ -162,9 +162,6 @@ export async function generateJwtFromKey(address: string | CoLinkClient, private
         .then((jwt: Jwt) => {
             jwtToken = jwt.getJwt();
         })
-        .catch((err: Error) => {
-            alert(err);
-        });
 
     return Promise.resolve(new UserData(privateKey, jwtToken));
 }
@@ -357,9 +354,8 @@ export async function deleteEntry(address: string | CoLinkClient, jwt: string, o
         });
 }
 
-export async function getUserStorageEntries(address: string | CoLinkClient, jwt: string): Promise<StorageEntry[]> {
+export async function getUserStorageEntries(address: string | CoLinkClient, jwt: string, prefix?: string): Promise<StorageEntry[]> {
     let client: CoLinkClient = getClient(address);
-    let userId: string = getUserId(jwt);
 
     let entries: StorageEntry[] = []
     let meta = getMetadata(jwt);
@@ -383,16 +379,21 @@ export async function getUserStorageEntries(address: string | CoLinkClient, jwt:
         return newPrefixes;
     }
 
-    let startingPrefix = userId + ":";
-    let keyPrefixes: string[] = [startingPrefix];
+    let keyPrefixes: string[];
+    if (typeof prefix !== 'undefined') {
+        keyPrefixes = [prefix];
+    } else {
+        let userId: string = getUserId(jwt);
+        keyPrefixes = [userId + ":"]
+    }
 
     /* Generates all layers psuedo-recursively */
-    while (keyPrefixes.length > 0) {
-        for (let prefix of keyPrefixes) {
-            let newKeys: string[] = await updateEntries(prefix);
-            keyPrefixes = keyPrefixes.concat(newKeys).slice(1);
-        }
-    }
+    // while (keyPrefixes.length > 0) {
+    //     for (let prefix of keyPrefixes) {
+    //         let newKeys: string[] = await updateEntries(prefix);
+    //         keyPrefixes = keyPrefixes.concat(newKeys).slice(1);
+    //     }
+    // }
 
     /* Generates one layer */
     for (let prefix of keyPrefixes) {
